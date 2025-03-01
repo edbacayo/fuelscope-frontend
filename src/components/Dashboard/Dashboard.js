@@ -53,7 +53,32 @@ const Dashboard = () => {
         fetchExpenses(); // Re-fetch expenses to update alerts and service reminders
     };
 
+    const onExpenseDeleted = async () => {
+        setLoading(true);
+        await fetchExpenses(); // ✅ Refresh expenses list
+    };
+
+    const handleDeleteExpense = async (expenseId, type) => {
+        if (!window.confirm('Are you sure you want to delete this expense?')) return;
     
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`${backendUrl}/api/expenses/${expenseId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            // ✅ Refresh the expense list after deletion
+            onExpenseDeleted();
+    
+            // ✅ If it was a service expense, refresh service reminders
+            if (type === 'service') {
+                fetchVehicleData(); // Refresh vehicle data to update reminders
+            }
+        } catch (err) {
+            console.error('Error deleting expense:', err);
+        }
+    };
+
 
     // fetch vehicle data to check service reminders
     const fetchVehicleData = useCallback(async () => {
@@ -62,26 +87,26 @@ const Dashboard = () => {
             const response = await axios.get(`${backendUrl}/api/vehicles/${vehicleId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-    
+
             const vehicle = response.data;
             checkServiceReminders(vehicle.serviceReminders, vehicle.odometer);
         } catch (error) {
             console.error('Error fetching vehicle data:', error);
         }
-    }, [backendUrl, vehicleId]);  
+    }, [backendUrl, vehicleId]);
     // check service reminders after fetching vehicle data
     const checkServiceReminders = (serviceReminders, currentOdometer) => {
         if (!serviceReminders) return;
-    
+
         const alerts = [];
         const currentDate = new Date();
-    
+
         serviceReminders.forEach((reminder) => {
             if (reminder.isEnabled) {
                 const dueOdometer = reminder.lastServiceOdometer + reminder.odometerInterval;
                 const dueDate = new Date(reminder.lastServiceDate);
                 dueDate.setMonth(dueDate.getMonth() + reminder.timeIntervalMonths);
-    
+
                 if (currentOdometer >= dueOdometer) {
                     alerts.push(`🚗 Service due: ${reminder.type} (Odometer)`);
                 }
@@ -96,7 +121,7 @@ const Dashboard = () => {
     useEffect(() => {
         fetchVehicleData();
         fetchExpenses();
-    }, [fetchVehicleData, fetchExpenses,]); 
+    }, [fetchVehicleData, fetchExpenses,]);
 
 
     // ✅ Handle alert from new expense entry
@@ -385,6 +410,56 @@ const Dashboard = () => {
                     <FuelEfficiencyChart />
                 </div>
             </div>
+
+            {/* 🧾 Expense List */}
+            <div className="mt-4">
+                <h4>Recent Expenses</h4>
+                <div className="table-responsive">
+                    <table className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Details</th>
+                                <th>Total Cost</th>
+                                <th>Odometer</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredExpenses.length > 0 ? (
+                                filteredExpenses.map((expense) => (
+                                    <tr key={expense._id}>
+                                        <td>{new Date(expense.date).toLocaleDateString()}</td>
+                                        <td>{expense.type.toUpperCase()}</td>
+                                        <td>
+                                            {expense.type === 'fuel' && `Fuel: ${expense.fuelDetails?.fuelBrand}`}
+                                            {expense.type === 'service' && `Service: ${expense.serviceDetails?.serviceType}`}
+                                            {expense.type === 'insurance' && 'Insurance Payment'}
+                                            {expense.type === 'registration' && 'Vehicle Registration'}
+                                        </td>
+                                        <td>₱{expense.totalCost.toLocaleString()}</td>
+                                        <td>{expense.odometer} km</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => handleDeleteExpense(expense._id, expense.type)}
+                                            >
+                                                🗑 Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6" className="text-center">No expenses recorded.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
             {/* Modals for Adding Entries */}
             <ExpenseModal
