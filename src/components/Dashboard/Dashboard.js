@@ -53,9 +53,51 @@ const Dashboard = () => {
         fetchExpenses(); // Re-fetch expenses to update alerts and service reminders
     };
 
+    
+
+    // fetch vehicle data to check service reminders
+    const fetchVehicleData = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${backendUrl}/api/vehicles/${vehicleId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            const vehicle = response.data;
+            checkServiceReminders(vehicle.serviceReminders, vehicle.odometer);
+        } catch (error) {
+            console.error('Error fetching vehicle data:', error);
+        }
+    }, [backendUrl, vehicleId]);  
+    // check service reminders after fetching vehicle data
+    const checkServiceReminders = (serviceReminders, currentOdometer) => {
+        if (!serviceReminders) return;
+    
+        const alerts = [];
+        const currentDate = new Date();
+    
+        serviceReminders.forEach((reminder) => {
+            if (reminder.isEnabled) {
+                const dueOdometer = reminder.lastServiceOdometer + reminder.odometerInterval;
+                const dueDate = new Date(reminder.lastServiceDate);
+                dueDate.setMonth(dueDate.getMonth() + reminder.timeIntervalMonths);
+    
+                if (currentOdometer >= dueOdometer) {
+                    alerts.push(`🚗 Service due: ${reminder.type} (Odometer)`);
+                }
+                if (currentDate >= dueDate) {
+                    alerts.push(`🕒 Service due: ${reminder.type} (Time-based)`);
+                }
+            }
+        });
+        setServiceAlerts(alerts);
+    };
+
     useEffect(() => {
-        fetchExpenses(); // Fetch on initial load
-    }, [fetchExpenses]); // Add fetchExpenses to the dependency array
+        fetchVehicleData();
+        fetchExpenses();
+    }, [fetchVehicleData, fetchExpenses,]); 
+
 
     // ✅ Handle alert from new expense entry
     const handleNewExpenseAlert = (alertMessage) => {
