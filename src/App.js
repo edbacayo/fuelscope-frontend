@@ -1,25 +1,78 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react'; // ✅ Import useEffect
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard/Dashboard';
+import NoVehicles from './components/NoVehicles';
+import NotFound from './components/NotFound';
+import RedirectToFirstVehicle from './components/RedirectToFirstVehicle';
+import RootRedirect from './components/RootRedirect';
+import { FilterProvider } from './context/FilterContext';
+
+// ✅ Enable Bootstrap icons & tooltips
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Tooltip } from 'bootstrap';
+
+// ✅ Protected Route Wrapper
+const PrivateRoute = ({ children }) => {
+    const token = localStorage.getItem('token');
+    return token ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    // ✅ Initialize Bootstrap tooltips inside a React hook
+    useEffect(() => {
+        const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach((tooltip) => {
+            new Tooltip(tooltip);
+        });
+    }, []);
+
+    return (
+        <FilterProvider>
+            <Router>
+                <Routes>
+                    {/* ✅ Handle root route */}
+                    <Route path="/" element={<RootRedirect />} />
+
+                    {/* ✅ Login route */}
+                    <Route path="/login" element={<Login />} />
+
+                    {/* ✅ Automatically redirect /dashboard to the first vehicle */}
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <PrivateRoute>
+                                <RedirectToFirstVehicle />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* ✅ Protected route for specific vehicle dashboards */}
+                    <Route
+                        path="/dashboard/:vehicleId"
+                        element={
+                            <PrivateRoute>
+                                <Dashboard />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* ✅ No Vehicles screen */}
+                    <Route
+                        path="/no-vehicles"
+                        element={
+                            <PrivateRoute>
+                                <NoVehicles />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* 🚫 Catch-all for 404 Not Found */}
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </Router>
+        </FilterProvider>
+    );
 }
 
 export default App;

@@ -1,38 +1,145 @@
+/* 🔄 Reset browser defaults */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 🌐 Global font-family */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;  /* Light gray background */
+  color: #212529;              /* Dark gray text */
+}
+
+/* 📱 Main app container */
 .App {
+  padding: 20px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* 🔠 Heading font styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* 🟦 Card styling */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background-color: #ffffff;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;  /* 🔥 Ensure content fills space evenly */
+  height: 100%;  /* 🔥 Force cards to maintain equal height */
 }
 
-.App-link {
-  color: #61dafb;
+/* 📝 Card title styling */
+.card-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* 💰 Card text styling (for numbers) */
+.card-text {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+/* 📊 Equal-height row layout using Flexbox */
+.row.g-3 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.col-lg-3,
+.col-md-6,
+.col-sm-12 {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 👔 Button styling */
+.btn {
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+/* 🎨 Action button colors */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+/* 🚗 Vehicle selector spacing */
+.vehicle-selector {
+  margin-bottom: 20px;
+}
+
+/* 📱 Responsive button behavior for smaller screens */
+@media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
   }
-  to {
-    transform: rotate(360deg);
-  }
+}
+
+/* 📏 Prevent text overflow inside cards */
+.card-body {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 🔗 Remove default link styling */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 🔍 Filters styling */
+.row.mb-3 {
+  gap: 10px;
+}
+
+.form-select {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* 📏 Ensure charts maintain equal height */
+.card {
+  height: 100%;
+}
+
+/* 🎨 Fuel Efficiency Chart Colors */
+.line-efficiency {
+  stroke: #28a745;
+}
+
+/* 🔥 Efficiency Cards */
+.card.bg-light {
+  background-color: #e9f7ef;
+  border-left: 5px solid #28a745;
+}
+
+.card .card-title {
+  font-weight: 600;
+}
+
+.card .card-text {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
