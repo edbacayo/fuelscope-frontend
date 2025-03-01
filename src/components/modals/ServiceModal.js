@@ -22,7 +22,7 @@ const globalServiceTypes = [
 
 const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => {
     const [serviceType, setServiceType] = useState(globalServiceTypes[0].type);
-    const [odometer, setOdometer] = useState('29302');
+    const [odometer, setOdometer] = useState('24001');
     const [totalCost, setTotalCost] = useState('200');
     const [notes, setNotes] = useState('');
     const [enableReminder, setEnableReminder] = useState(true); // ✅ Reminder toggle
