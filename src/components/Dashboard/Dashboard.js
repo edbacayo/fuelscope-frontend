@@ -63,10 +63,10 @@ const Dashboard = () => {
     
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`${backendUrl}/api/expenses/${expenseId}`, {
+            const response = await axios.delete(`${backendUrl}/api/expenses/${expenseId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-    
+
             // ✅ Refresh the expense list after deletion
             onExpenseDeleted();
     
@@ -148,7 +148,7 @@ const Dashboard = () => {
             (selectedYear === 0 || entryYear === selectedYear) && // ✅ Show all years if 0 is selected
             (selectedMonth === 0 || entryMonth === selectedMonth) // ✅ Show all months if 0 is selected
         );
-    });
+    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // sort by newest to oldest
 
     // 🚗 Fuel Efficiency Calculations
     const fuelEntries = filteredExpenses
