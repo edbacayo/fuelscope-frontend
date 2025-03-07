@@ -18,6 +18,7 @@ const Dashboard = () => {
     const [efficiencyAlert, setEfficiencyAlert] = useState(null); // 🚨 Alert State
     const [serviceAlerts, setServiceAlerts] = useState([]);
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const [upcomingReminders, setUpcomingReminders] = useState([]);
 
     // Use useCallback to memoize fetchExpenses function to prevent unnecessary re-renders
     const fetchExpenses = useCallback(async () => {
@@ -48,6 +49,20 @@ const Dashboard = () => {
         }
     }, [backendUrl, vehicleId]); // `fetchExpenses` now depends on `vehicleId` and `backendUrl`
 
+    const fetchUpcomingReminders = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${backendUrl}/api/vehicles/${vehicleId}/reminders`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setUpcomingReminders(response.data);
+        } catch (error) {
+            console.error('Error fetching upcoming reminders:', error);
+        }
+    }, [backendUrl, vehicleId]);
+
+
     const onExpenseAdded = () => {
         setLoading(true);
         fetchExpenses(); // Re-fetch expenses to update alerts and service reminders
@@ -60,7 +75,7 @@ const Dashboard = () => {
 
     const handleDeleteExpense = async (expenseId, type) => {
         if (!window.confirm('Are you sure you want to delete this expense?')) return;
-    
+
         try {
             const token = localStorage.getItem('token');
             await axios.delete(`${backendUrl}/api/expenses/${expenseId}`, {
@@ -69,7 +84,7 @@ const Dashboard = () => {
 
             // ✅ Refresh the expense list after deletion
             onExpenseDeleted();
-    
+
             // ✅ If it was a service expense, refresh service reminders
             if (type === 'service') {
                 fetchVehicleData(); // Refresh vehicle data to update reminders
@@ -121,7 +136,8 @@ const Dashboard = () => {
     useEffect(() => {
         fetchVehicleData();
         fetchExpenses();
-    }, [fetchVehicleData, fetchExpenses,]);
+        fetchUpcomingReminders();
+    }, [fetchVehicleData, fetchExpenses, fetchUpcomingReminders]);
 
 
     // ✅ Handle alert from new expense entry
@@ -247,6 +263,30 @@ const Dashboard = () => {
                         />
                     </div>
                 ))
+            )}
+
+            {/* 📌 Upcoming Service Reminders */}
+            {upcomingReminders.length > 0 && (
+                <div className="card mt-4 mb-4">
+                    <div className="card-header bg-warning text-dark">
+                        <h5>Upcoming Service Reminders</h5>
+                    </div>
+                    <div className="card-body">
+                        <ul className="list-group">
+                            {upcomingReminders.map((reminder, index) => (
+                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                                    {reminder.type}
+                                    <span className="badge bg-primary">
+                                        {reminder.kmUntilDue > 0
+                                            ? `Due in ${reminder.kmUntilDue} km`
+                                            : `Due by ${new Date(reminder.dueDate).toLocaleDateString()}`
+                                        }
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
             )}
 
 
