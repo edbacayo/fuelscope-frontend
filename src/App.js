@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'; // ✅ Import useEffect
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
+import Login from './pages/Login';
 import Dashboard from './components/Dashboard/Dashboard';
-import NoVehicles from './components/NoVehicles';
-import NotFound from './components/NotFound';
+import NoVehicles from './pages/NoVehicles';
+import NotFound from './pages/NotFound';
 import RedirectToFirstVehicle from './components/RedirectToFirstVehicle';
 import RootRedirect from './components/RootRedirect';
 import { FilterProvider } from './context/FilterContext';
