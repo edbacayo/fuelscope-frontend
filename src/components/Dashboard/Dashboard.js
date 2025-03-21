@@ -109,6 +109,7 @@ const Dashboard = () => {
             console.error('Error fetching vehicle data:', error);
         }
     }, [backendUrl, vehicleId]);
+    
     // check service reminders after fetching vehicle data
     const checkServiceReminders = (serviceReminders, currentOdometer) => {
         if (!serviceReminders) return;
