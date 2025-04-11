@@ -5,14 +5,14 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
     const [type, setType] = useState('fuel');
     const [odometer, setOdometer] = useState('');
     const [totalCost, setTotalCost] = useState('');
-    const [fuelBrand, setFuelBrand] = useState(''); // ✅ Default fuel brand
+    const [fuelBrand, setFuelBrand] = useState(''); 
     const [pricePerLiter, setPricePerLiter] = useState('');
-    const [notes, setNotes] = useState(''); // ✅ New Notes Field
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // ✅ Default to today's date
+    const [notes, setNotes] = useState(''); 
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]); 
     const [duplicateExpense, setDuplicateExpense] = useState(null);
     const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
-    // ✅ Dynamic fetch list of fuel brands but fall back to predefined list
+    // Dynamic fetch list of fuel brands but fall back to predefined list
     const [fuelBrands, setFuelBrands] = useState([
         'Diesel',
         'Gasoline',
@@ -39,7 +39,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/fuel-brands`);
                 if (response.data && response.data.length > 0) {
                     setFuelBrands(response.data.map(b => b.name));
-                    setFuelBrand(response.data[0].name); // ✅ Set default from DB
+                    setFuelBrand(response.data[0].name);
                 }
             } catch (error) {
                 console.warn('⚠️ Falling back to default fuel brands. Error fetching:', error.message);
