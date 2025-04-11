@@ -1,36 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-// ✅ List of predefined fuel brands
-const fuelBrands = [
-    'Diesel',
-    'Gasoline',
-    'Petron Blaze 100 Euro 6 (RON 100+)',
-    'Petron XCS (RON 95+)',
-    'Petron Xtra Advance (RON 91+)',
-    'Petron Turbo Diesel',
-    'Petron Diesel Max',
-    'Shell V-Power Racing (RON 97+)',
-    'Shell V-Power (RON 95+)',
-    'Shell FuelSave Unleaded (RON 91+)',
-    'Shell V-Power Diesel',
-    'Shell FuelSave Diesel',
-    'Caltex Gold (RON 95+)',
-    'Caltex Silver (RON 91+)',
-    'Caltex with Techron (RON 91+)',
-    'Caltex Power Diesel with Techron D'
-];
 
 const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => {
     const [type, setType] = useState('fuel');
     const [odometer, setOdometer] = useState('');
     const [totalCost, setTotalCost] = useState('');
-    const [fuelBrand, setFuelBrand] = useState(fuelBrands[3]); // ✅ Default fuel brand
+    const [fuelBrand, setFuelBrand] = useState(''); // ✅ Default fuel brand
     const [pricePerLiter, setPricePerLiter] = useState('');
     const [notes, setNotes] = useState(''); // ✅ New Notes Field
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // ✅ Default to today's date
     const [duplicateExpense, setDuplicateExpense] = useState(null);
     const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+
+    // ✅ Dynamic fetch list of fuel brands but fall back to predefined list
+    const [fuelBrands, setFuelBrands] = useState([
+        'Diesel',
+        'Gasoline',
+        'Petron Blaze 100 Euro 6 (RON 100+)',
+        'Petron XCS (RON 95+)',
+        'Petron Xtra Advance (RON 91+)',
+        'Petron Turbo Diesel',
+        'Petron Diesel Max',
+        'Shell V-Power Racing (RON 97+)',
+        'Shell V-Power (RON 95+)',
+        'Shell FuelSave Unleaded (RON 91+)',
+        'Shell V-Power Diesel',
+        'Shell FuelSave Diesel',
+        'Caltex Gold (RON 95+)',
+        'Caltex Silver (RON 91+)',
+        'Caltex with Techron (RON 91+)',
+        'Caltex Power Diesel with Techron D'
+    ]);
+
+    // Fetch fuel brands from backend
+    useEffect(() => {
+        const fetchFuelBrands = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/fuel-brands`);
+                if (response.data && response.data.length > 0) {
+                    setFuelBrands(response.data.map(b => b.name));
+                    setFuelBrand(response.data[0].name); // ✅ Set default from DB
+                }
+            } catch (error) {
+                console.warn('⚠️ Falling back to default fuel brands. Error fetching:', error.message);
+            }
+        };
+
+        if (show) fetchFuelBrands(); // fetch only when modal is open
+    }, [show]);
 
     // ✅ Handle Form Submission with Alert Detection
     const handleSubmit = async (e, forceAdd = false) => {
@@ -184,9 +201,14 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                 </div>
 
                                 {/* ✅ Submit Button */}
-                                <button type="submit" className="btn btn-primary w-100">
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary w-100"
+                                    disabled={!odometer || !totalCost || (type === 'fuel' && (!fuelBrand || !pricePerLiter))}
+                                >
                                     Add Expense
                                 </button>
+
                             </form>
                         </div>
                     </div>
