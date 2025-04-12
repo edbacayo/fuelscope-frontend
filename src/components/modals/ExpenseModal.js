@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getAuthHeaders } from '../../utils/auth';
 
 const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => {
     const [type, setType] = useState('fuel');
     const [odometer, setOdometer] = useState('');
     const [totalCost, setTotalCost] = useState('');
-    const [fuelBrand, setFuelBrand] = useState(''); 
+    const [fuelBrand, setFuelBrand] = useState('');
     const [pricePerLiter, setPricePerLiter] = useState('');
-    const [notes, setNotes] = useState(''); 
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]); 
+    const [notes, setNotes] = useState('');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [duplicateExpense, setDuplicateExpense] = useState(null);
     const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
@@ -29,17 +30,22 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
         'Caltex Gold (RON 95+)',
         'Caltex Silver (RON 91+)',
         'Caltex with Techron (RON 91+)',
-        'Caltex Power Diesel with Techron D'
+        'Caltex Power Diesel with Techron D',
+        'Test'
     ]);
 
     // Fetch fuel brands from backend
     useEffect(() => {
         const fetchFuelBrands = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/fuel-brands`);
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/fuel-brands`,
+                    getAuthHeaders()
+                );
                 if (response.data && response.data.length > 0) {
                     setFuelBrands(response.data.map(b => b.name));
-                    setFuelBrand(response.data[0].name);
+                    setFuelBrand(response.data[5].name);
+                    console.log('*******', response.data);
                 }
             } catch (error) {
                 console.warn('⚠️ Falling back to default fuel brands. Error fetching:', error.message);
@@ -53,7 +59,6 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
     const handleSubmit = async (e, forceAdd = false) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
             const expenseData = {
                 vehicleId,
                 type,
@@ -71,9 +76,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
             const response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/api/expenses`,
                 expenseData,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
+                getAuthHeaders()
             );
 
             // ✅ Handle Alert if Present
