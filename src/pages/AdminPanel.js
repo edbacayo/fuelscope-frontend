@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 const AdminPanel = () => {
     const [users, setUsers] = useState([]);
     const token = localStorage.getItem('token');
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users`, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -18,7 +14,11 @@ const AdminPanel = () => {
         } catch (error) {
             console.error('Error fetching users:', error);
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const updateUserRole = async (id, newRole) => {
         try {
@@ -68,7 +68,7 @@ const AdminPanel = () => {
                 </thead>
                 <tbody>
                     {users.map(user => (
-                        <tr key={user.id}>
+                        <tr key={user._id}>
                             <td>{user.name}</td>
                             <td>{user.email}</td>
                             <td>

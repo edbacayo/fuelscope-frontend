@@ -45,7 +45,6 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                 if (response.data && response.data.length > 0) {
                     setFuelBrands(response.data.map(b => b.name));
                     setFuelBrand(response.data[5].name);
-                    console.log('*******', response.data);
                 }
             } catch (error) {
                 console.warn('⚠️ Falling back to default fuel brands. Error fetching:', error.message);
