@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getAuthHeaders } from '../../utils/auth';
 
 
 // 🔧 Global Service Types List (Admin-Managed) with Default Reminders
-const globalServiceTypes = [
-    { type: 'Oil and Oil Filter Change', odometerInterval: 5000, timeIntervalMonths: 6 },
-    { type: 'Preventive Maintenance Service (PMS)', odometerInterval: 10000, timeIntervalMonths: 6 },
-    { type: 'Tire Rotation', odometerInterval: 10000, timeIntervalMonths: 12 },
-    { type: 'Brake Inspection', odometerInterval: 10000, timeIntervalMonths: 12 },
-    { type: 'Cabin Air Filter Replacement', odometerInterval: 15000, timeIntervalMonths: 12 },
-    { type: 'Air Filter Replacement', odometerInterval: 15000, timeIntervalMonths: 12 },
-    { type: 'Brake Fluid Replacement', odometerInterval: 30000, timeIntervalMonths: 24 },
-    { type: 'Transmission Fluid Change', odometerInterval: 60000, timeIntervalMonths: 48 },
-    { type: 'Coolant Flush', odometerInterval: 50000, timeIntervalMonths: 24 },
-    { type: 'Spark Plug Replacement', odometerInterval: 30000, timeIntervalMonths: 24 },
-    { type: 'Timing Belt Replacement', odometerInterval: 100000, timeIntervalMonths: 60 },
-    { type: 'Battery Replacement', odometerInterval: 50000, timeIntervalMonths: 36 },
-    { type: 'Waxing', odometerInterval: 0, timeIntervalMonths: 6 }
-];
-
+// const globalServiceTypes = [
+//     { type: 'Oil and Oil Filter Change', odometerInterval: 5000, timeIntervalMonths: 6 },
+//     { type: 'Preventive Maintenance Service (PMS)', odometerInterval: 10000, timeIntervalMonths: 6 },
+//     { type: 'Tire Rotation', odometerInterval: 10000, timeIntervalMonths: 12 },
+//     { type: 'Brake Inspection', odometerInterval: 10000, timeIntervalMonths: 12 },
+//     { type: 'Cabin Air Filter Replacement', odometerInterval: 15000, timeIntervalMonths: 12 },
+//     { type: 'Air Filter Replacement', odometerInterval: 15000, timeIntervalMonths: 12 },
+//     { type: 'Brake Fluid Replacement', odometerInterval: 30000, timeIntervalMonths: 24 },
+//     { type: 'Transmission Fluid Change', odometerInterval: 60000, timeIntervalMonths: 48 },
+//     { type: 'Coolant Flush', odometerInterval: 50000, timeIntervalMonths: 24 },
+//     { type: 'Spark Plug Replacement', odometerInterval: 30000, timeIntervalMonths: 24 },
+//     { type: 'Timing Belt Replacement', odometerInterval: 100000, timeIntervalMonths: 60 },
+//     { type: 'Battery Replacement', odometerInterval: 50000, timeIntervalMonths: 36 },
+//     { type: 'Waxing', odometerInterval: 0, timeIntervalMonths: 6 }
+// ];
 
 const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => {
-    const [serviceType, setServiceType] = useState(globalServiceTypes[0].type);
     const [odometer, setOdometer] = useState('');
     const [totalCost, setTotalCost] = useState('');
     const [notes, setNotes] = useState('');
@@ -31,29 +30,40 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [duplicateService, setDuplicateService] = useState(null);
     const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+    const [serviceTypes, setServiceTypes] = useState([]);
+    const [serviceType, setServiceType] = useState('');
 
-
-    const getDefaultReminder = (type) => {
-        const service = globalServiceTypes.find((s) => s.type === type);
-        return {
-            odometerInterval: service ? service.odometerInterval : 0,
-            timeIntervalMonths: service ? service.timeIntervalMonths : 0
-        };
-    };
-
-    // Auto-fill intervals when service type changes
     useEffect(() => {
-        const { odometerInterval, timeIntervalMonths } = getDefaultReminder(serviceType);
-        setCustomOdometerInterval(odometerInterval);
-        setCustomTimeInterval(timeIntervalMonths);
-    }, [serviceType]);
+        const fetchServiceTypes = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/service-types`,
+                    getAuthHeaders()
+                );
+                setServiceTypes(response.data);
+            } catch (error) {
+                console.error('Error fetching service types:', error);
+            }
+        }
+
+        fetchServiceTypes();
+    }, []);
+
+    useEffect(() => {
+        if (serviceTypes.length > 0) {
+            const service = serviceTypes.find((s) => s.type === serviceType);
+            const odometerInterval = service ? service.odometerInterval : 0;
+            const timeIntervalMonths = service ? service.timeIntervalMonths : 0;
+
+            setCustomOdometerInterval(odometerInterval);
+            setCustomTimeInterval(timeIntervalMonths);
+        }
+    }, [serviceType, serviceTypes]);
 
 
     const handleSubmit = async (e, forceAdd = false) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-
             // Use user-modified values from the state
             const odometerInterval = customOdometerInterval;
             const timeIntervalMonths = customTimeInterval;
@@ -76,20 +86,25 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                 vehicleId,
                 type: 'service',
                 serviceDetails: { serviceType },
-                odometer,
-                totalCost,
+                odometer: Number(odometer),
+                totalCost: Number(totalCost),
                 notes,
                 date,
-                reminderToSend: reminderToSend // ✅ Only send the modified reminder
+                reminderToSend: reminderToSend
+                    ? {
+                        ...reminderToSend,
+                        odometerInterval: Number(reminderToSend.odometerInterval),
+                        timeIntervalMonths: Number(reminderToSend.timeIntervalMonths),
+                        lastServiceOdometer: Number(reminderToSend.lastServiceOdometer)
+                    }
+                    : null
             };
 
             // 📤 Send the service entry with the relevant reminder only
             const response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/api/expenses`,
                 serviceData,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
+                getAuthHeaders()
             );
 
             // ✅ Handle Alert if Present
@@ -141,7 +156,7 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                                         onChange={(e) => setServiceType(e.target.value)}
                                         required
                                     >
-                                        {globalServiceTypes.map((service) => (
+                                        {serviceTypes.map((service) => (
                                             <option key={service.type} value={service.type}>
                                                 {service.type}
                                             </option>
@@ -234,7 +249,10 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                                     />
                                 </div>
 
-                                <button type="submit" className="btn btn-success w-100">Add Service</button>
+                                <button type="submit"
+                                    className="btn btn-success w-100"
+                                    disabled={!odometer ||!totalCost}
+                                    >Add Service</button>
                             </form>
                         </div>
                     </div>
