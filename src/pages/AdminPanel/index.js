@@ -23,7 +23,7 @@ export default function AdminPanel() {
     }, [navigate]);
 
     return (
-        <div>
+        <div className="container mt-4">
             <UserSection />
             <FuelBrandSection />
             <ServiceTypeSection />

@@ -397,7 +397,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* 🔥 Fuel Efficiency Metrics */}
+            {/* Fuel Efficiency Metrics */}
             <div className="row g-3 mt-3">
                 <div className="col-lg-4 col-md-6 col-sm-12 d-flex">
                     <div className="card shadow-sm p-3 text-center flex-grow-1 bg-light">
@@ -419,7 +419,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* 📊 Charts Section */}
+            {/* Charts Section */}
             <div className="row g-3 mt-3">
                 <div className="col-12">
                     <FuelChart />
@@ -429,7 +429,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* 🧾 Expense List */}
+            {/* Expense List */}
             <div className="mt-4">
                 <h4>Recent Expenses</h4>
                 <div className="table-responsive">
@@ -456,7 +456,7 @@ const Dashboard = () => {
                                             {expense.type === 'insurance' && 'Insurance Payment'}
                                             {expense.type === 'registration' && 'Vehicle Registration'}
                                         </td>
-                                        <td>₱{expense.totalCost.toLocaleString()}</td>
+                                        <td>₱{expense.totalCost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
                                         <td>{expense.odometer} km</td>
                                         <td>
                                             <button
