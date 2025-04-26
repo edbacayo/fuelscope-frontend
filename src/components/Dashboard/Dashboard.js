@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, useCallback, useMemo } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import VehicleSelector from './VehicleSelector';
 import FuelChart from './FuelChart';
@@ -9,6 +8,7 @@ import FuelEfficiencyChart from './FuelEfficiencyChart';
 import FuellyImportModal from '../modals/FuellyImportModal';
 import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
 import 'bootstrap/dist/js/bootstrap.bundle';
+import api from '../../utils/api';
 
 const Dashboard = () => {
     const { vehicleId } = useParams();
@@ -20,7 +20,6 @@ const Dashboard = () => {
     const [showFuellyModal, setShowFuellyModal] = useState(false);
     const [efficiencyAlert, setEfficiencyAlert] = useState(null); // Alert State
     const [serviceAlerts, setServiceAlerts] = useState([]);
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const [upcomingReminders, setUpcomingReminders] = useState([]);
     const [expensePage, setExpensePage] = useState(1);
     const EXPENSES_PER_PAGE = 10;
@@ -29,7 +28,7 @@ const Dashboard = () => {
     const fetchExpenses = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${backendUrl}/api/expenses/${vehicleId}`, {
+            const response = await api.get(`/api/expenses/${vehicleId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -52,12 +51,12 @@ const Dashboard = () => {
         } catch (error) {
             console.error('Error fetching expenses:', error);
         }
-    }, [backendUrl, vehicleId]); // `fetchExpenses` now depends on `vehicleId` and `backendUrl`
+    }, [vehicleId]);
 
     const fetchUpcomingReminders = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${backendUrl}/api/vehicles/${vehicleId}/reminders`, {
+            const response = await api.get(`/api/vehicles/${vehicleId}/reminders`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -65,7 +64,7 @@ const Dashboard = () => {
         } catch (error) {
             console.error('Error fetching upcoming reminders:', error);
         }
-    }, [backendUrl, vehicleId]);
+    }, [vehicleId]);
 
 
     const onExpenseAdded = () => {
@@ -83,7 +82,7 @@ const Dashboard = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`${backendUrl}/api/expenses/${expenseId}`, {
+            await api.delete(`/api/expenses/${expenseId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -104,7 +103,7 @@ const Dashboard = () => {
     const fetchVehicleData = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${backendUrl}/api/vehicles/${vehicleId}`, {
+            const response = await api.get(`/api/vehicles/${vehicleId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -113,7 +112,7 @@ const Dashboard = () => {
         } catch (error) {
             console.error('Error fetching vehicle data:', error);
         }
-    }, [backendUrl, vehicleId]);
+    }, [vehicleId]);
 
     // check service reminders after fetching vehicle data
     const checkServiceReminders = (serviceReminders, currentOdometer) => {

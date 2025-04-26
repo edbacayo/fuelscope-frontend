@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'; // ✅ Import useEffect
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import AdminPanel from './pages/AdminPanel';
+import AdminPanel from './pages/AdminPanel/index';
 import Dashboard from './components/Dashboard/Dashboard';
 import NoVehicles from './pages/NoVehicles';
 import NotFound from './pages/NotFound';

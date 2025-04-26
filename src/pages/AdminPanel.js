@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-// import axios from 'axios';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
