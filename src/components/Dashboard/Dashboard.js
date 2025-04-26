@@ -6,6 +6,7 @@ import FuelChart from './FuelChart';
 import ExpenseModal from '../modals/ExpenseModal';
 import ServiceModal from '../modals/ServiceModal';
 import FuelEfficiencyChart from './FuelEfficiencyChart';
+import FuellyImportModal from '../modals/FuellyImportModal';
 import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
 import 'bootstrap/dist/js/bootstrap.bundle';
 
@@ -16,6 +17,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [showServiceModal, setShowServiceModal] = useState(false);
+    const [showFuellyModal, setShowFuellyModal] = useState(false);
     const [efficiencyAlert, setEfficiencyAlert] = useState(null); // Alert State
     const [serviceAlerts, setServiceAlerts] = useState([]);
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -112,7 +114,7 @@ const Dashboard = () => {
             console.error('Error fetching vehicle data:', error);
         }
     }, [backendUrl, vehicleId]);
-    
+
     // check service reminders after fetching vehicle data
     const checkServiceReminders = (serviceReminders, currentOdometer) => {
         if (!serviceReminders) return;
@@ -492,6 +494,13 @@ const Dashboard = () => {
                         </ul>
                     </nav>
                 )}
+                {/* Import from Fuelly link */}
+                <div className="text-center my-3">
+                    <button className="btn btn-link p-0"
+                        onClick={() => setShowFuellyModal(true)}>
+                        <small>Import from Fuelly</small>
+                    </button>
+                </div>
             </div>
 
             {/* Modals for Adding Entries */}
@@ -508,6 +517,12 @@ const Dashboard = () => {
                 vehicleId={vehicleId}
                 onAlert={handleNewServiceAlert}
                 onExpenseAdded={onExpenseAdded} // Pass the onExpenseAdded function here
+            />
+            <FuellyImportModal
+                show={showFuellyModal}
+                onClose={() => setShowFuellyModal(false)}
+                vehicleId={vehicleId}
+                onImport={onExpenseAdded}
             />
         </div>
     );
