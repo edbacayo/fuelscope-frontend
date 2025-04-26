@@ -9,18 +9,18 @@ import RedirectToFirstVehicle from './components/RedirectToFirstVehicle';
 import RootRedirect from './components/RootRedirect';
 import { FilterProvider } from './context/FilterContext';
 
-// ✅ Enable Bootstrap icons & tooltips
+// Enable Bootstrap icons & tooltips
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Tooltip } from 'bootstrap';
 
-// ✅ Protected Route Wrapper
+// Protected Route Wrapper
 const PrivateRoute = ({ children }) => {
     const token = localStorage.getItem('token');
     return token ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
-    // ✅ Initialize Bootstrap tooltips inside a React hook
+    // Initialize Bootstrap tooltips inside a React hook
     useEffect(() => {
         const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         tooltips.forEach((tooltip) => {
@@ -32,13 +32,13 @@ function App() {
         <FilterProvider>
             <Router>
                 <Routes>
-                    {/* ✅ Handle root route */}
+                    {/* Handle root route */}
                     <Route path="/" element={<RootRedirect />} />
 
-                    {/* ✅ Login route */}
+                    {/* Login route */}
                     <Route path="/login" element={<Login />} />
 
-                    {/* ✅ Automatically redirect /dashboard to the first vehicle */}
+                    {/* Automatically redirect /dashboard to the first vehicle */}
                     <Route
                         path="/dashboard"
                         element={
@@ -48,7 +48,7 @@ function App() {
                         }
                     />
 
-                    {/* ✅ Protected route for specific vehicle dashboards */}
+                    {/* Protected route for specific vehicle dashboards */}
                     <Route
                         path="/dashboard/:vehicleId"
                         element={
@@ -58,7 +58,7 @@ function App() {
                         }
                     />
 
-                    {/* ✅ No Vehicles screen */}
+                    {/* No Vehicles screen */}
                     <Route
                         path="/no-vehicles"
                         element={
