@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import VehicleSelector from './VehicleSelector';
@@ -6,19 +6,22 @@ import FuelChart from './FuelChart';
 import ExpenseModal from '../modals/ExpenseModal';
 import ServiceModal from '../modals/ServiceModal';
 import FuelEfficiencyChart from './FuelEfficiencyChart';
-import { FilterContext } from '../../context/FilterContext'; // ✅ Import Filter Context
+import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
+import 'bootstrap/dist/js/bootstrap.bundle';
 
 const Dashboard = () => {
     const { vehicleId } = useParams();
-    const { selectedYear, setSelectedYear, selectedMonth, setSelectedMonth } = useContext(FilterContext); // ✅ Get filter values from context
+    const { selectedYear, setSelectedYear, selectedMonth, setSelectedMonth } = useContext(FilterContext); // Get filter values from context
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [showServiceModal, setShowServiceModal] = useState(false);
-    const [efficiencyAlert, setEfficiencyAlert] = useState(null); // 🚨 Alert State
+    const [efficiencyAlert, setEfficiencyAlert] = useState(null); // Alert State
     const [serviceAlerts, setServiceAlerts] = useState([]);
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const [upcomingReminders, setUpcomingReminders] = useState([]);
+    const [expensePage, setExpensePage] = useState(1);
+    const EXPENSES_PER_PAGE = 10;
 
     // Use useCallback to memoize fetchExpenses function to prevent unnecessary re-renders
     const fetchExpenses = useCallback(async () => {
@@ -70,7 +73,7 @@ const Dashboard = () => {
 
     const onExpenseDeleted = async () => {
         setLoading(true);
-        await fetchExpenses(); // ✅ Refresh expenses list
+        await fetchExpenses(); // Refresh expenses list
     };
 
     const handleDeleteExpense = async (expenseId, type) => {
@@ -82,10 +85,10 @@ const Dashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // ✅ Refresh the expense list after deletion
+            // Refresh the expense list after deletion
             onExpenseDeleted();
 
-            // ✅ If it was a service expense, refresh service reminders
+            // If it was a service expense, refresh service reminders
             if (type === 'service') {
                 fetchVehicleData(); // Refresh vehicle data to update reminders
             }
@@ -140,32 +143,39 @@ const Dashboard = () => {
         fetchUpcomingReminders();
     }, [fetchVehicleData, fetchExpenses, fetchUpcomingReminders]);
 
+    useEffect(() => {
+        const els = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        els.forEach(el => new window.bootstrap.Tooltip(el));
+    }, []);
 
-    // ✅ Handle alert from new expense entry
+    // Alert handlers
     const handleNewExpenseAlert = (alertMessage) => {
         setEfficiencyAlert(alertMessage);
     };
-    // Update this function to handle new service-related alerts
     const handleNewServiceAlert = (alertMessage) => {
-        setServiceAlerts(alertMessage); // Set the service alert
+        setServiceAlerts(alertMessage);
     };
     const handleCloseAlert = (index) => {
-        // Remove the alert at the given index
-        const updatedAlerts = serviceAlerts.filter((_, alertIndex) => alertIndex !== index);
-        setServiceAlerts(updatedAlerts); // Update the state with the filtered alerts
+        const updatedAlerts = serviceAlerts.filter((_, i) => i !== index);
+        setServiceAlerts(updatedAlerts);
     };
 
-    // 🔢 Apply filters (Year & Month)
     const filteredExpenses = expenses.filter((entry) => {
         const entryDate = new Date(entry.date);
         const entryYear = entryDate.getFullYear();
         const entryMonth = entryDate.getMonth() + 1;
 
         return (
-            (selectedYear === 0 || entryYear === selectedYear) && // ✅ Show all years if 0 is selected
-            (selectedMonth === 0 || entryMonth === selectedMonth) // ✅ Show all months if 0 is selected
+            (selectedYear === 0 || entryYear === selectedYear) && // Show all years if 0 is selected
+            (selectedMonth === 0 || entryMonth === selectedMonth) // Show all months if 0 is selected
         );
     }).sort((a, b) => new Date(b.date) - new Date(a.date)); // sort by newest to oldest
+
+    const totalExpensePages = Math.ceil(filteredExpenses.length / EXPENSES_PER_PAGE);
+    const paginatedExpenses = useMemo(() => {
+        const start = (expensePage - 1) * EXPENSES_PER_PAGE;
+        return filteredExpenses.slice(start, start + EXPENSES_PER_PAGE);
+    }, [filteredExpenses, expensePage]);
 
     // 🚗 Fuel Efficiency Calculations
     const fuelEntries = filteredExpenses
@@ -267,90 +277,56 @@ const Dashboard = () => {
             )}
 
             {/* 📌 Upcoming Service Reminders */}
-            {upcomingReminders.length > 0 && (
-                <div className="card mt-4 mb-4">
-                    <div className="card-header bg-warning text-dark">
-                        <h5>Upcoming Service Reminders</h5>
+            <div className="accordion mb-4" id="reminderAccordion">
+                <div className="accordion-item">
+                    <h2 className="accordion-header" id="headingReminders">
+                        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReminders" aria-expanded="true" aria-controls="collapseReminders">
+                            Upcoming Service Reminders ({upcomingReminders.length})
+                        </button>
+                    </h2>
+                    <div id="collapseReminders" className="accordion-collapse collapse show" aria-labelledby="headingReminders" data-bs-parent="#reminderAccordion">
+                        <div className="accordion-body p-0">
+                            <ul className="list-group list-group-flush">
+                                {upcomingReminders.map((reminder, idx) => (
+                                    <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
+                                        {reminder.type}
+                                        <span className="badge bg-primary">
+                                            {reminder.kmUntilDue > 0
+                                                ? `Due in ${reminder.kmUntilDue} km`
+                                                : `Due by ${new Date(reminder.dueDate).toLocaleDateString()}`
+                                            }
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
-                    <div className="card-body">
-                        <ul className="list-group">
-                            {upcomingReminders.map((reminder, index) => (
-                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                    {reminder.type}
-                                    <span className="badge bg-primary">
-                                        {reminder.kmUntilDue > 0
-                                            ? `Due in ${reminder.kmUntilDue} km`
-                                            : `Due by ${new Date(reminder.dueDate).toLocaleDateString()}`
-                                        }
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            )}
-
-
-            {/* 📅 Year & Month Filters */}
-            <div className="row mb-4">
-                {/* Year Filter */}
-                <div className="col-md-6">
-                    <label htmlFor="yearFilter" className="form-label">Year</label>
-                    <select
-                        id="yearFilter"
-                        className="form-select"
-                        value={selectedYear}
-                        onChange={(e) => {
-                            const year = parseInt(e.target.value);
-                            setSelectedYear(year);
-
-                            if (year === 0) setSelectedMonth(0); // ✅ Auto-select "All Months"
-                        }}
-                    >
-                        <option value={0}>All Time</option> {/* ✅ Add All Years Option */}
-                        {years
-                            .filter((year) => year !== 0)
-                            .map((year) => (
-                                <option key={year} value={year}>
-                                    {year}
-                                </option>
-                            ))}
-                    </select>
-                </div>
-
-                {/* Month Filter */}
-                <div className="col-md-6">
-                    <label htmlFor="monthFilter" className="form-label">Month</label>
-                    <select
-                        id="monthFilter"
-                        className="form-select"
-                        value={selectedMonth}
-                        onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                        disabled={selectedYear === 0} // ✅ Disable when "All Years" is selected
-                    >
-                        {months.map((month) => (
-                            <option key={month.value} value={month.value}>
-                                {month.name}
-                            </option>
-                        ))}
-                    </select>
                 </div>
             </div>
 
-            {/* 🚀 Quick Action Buttons */}
-            <div className="d-flex justify-content-end my-3">
-                <button
-                    className="btn btn-primary me-2"
-                    onClick={() => setShowExpenseModal(true)}
-                >
-                    ➕ Add Expense
-                </button>
-                <button
-                    className="btn btn-success"
-                    onClick={() => setShowServiceModal(true)}
-                >
-                    🛠️ Add Service
-                </button>
+            {/* 📅 Year & Month Filters */}
+            <div className="sticky-top bg-white py-2 shadow-sm" style={{ zIndex: 1020 }}>
+                <div className="container d-flex flex-wrap align-items-center justify-content-between">
+                    <div className="d-flex flex-wrap">
+                        <div className="me-3 mb-2">
+                            <label htmlFor="yearFilter" className="form-label mb-0">Year</label>
+                            <select id="yearFilter" className="form-select" value={selectedYear} onChange={e => { const y = parseInt(e.target.value); setSelectedYear(y); if (y === 0) setSelectedMonth(0); }}>
+                                <option value={0}>All Time</option>
+                                {years.filter(y => y !== 0).map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                        </div>
+                        <div className="me-3 mb-2">
+                            <label htmlFor="monthFilter" className="form-label mb-0">Month</label>
+                            <select id="monthFilter" className="form-select" value={selectedMonth} onChange={e => setSelectedMonth(parseInt(e.target.value))} disabled={selectedYear === 0}>
+                                {months.map(m => <option key={m.value} value={m.value}>{m.name}</option>)}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="mb-2">
+                        <button className="btn btn-primary me-2" onClick={() => setShowExpenseModal(true)}>➕ Add Expense</button>
+                        <button className="btn btn-success" onClick={() => setShowServiceModal(true)}>🛠️ Add Service</button>
+                    </div>
+                </div>
             </div>
 
             {/* 🔲 Responsive Summary Cards with Icons & Tooltips */}
@@ -468,8 +444,8 @@ const Dashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredExpenses.length > 0 ? (
-                                filteredExpenses.map((expense) => (
+                            {paginatedExpenses.length > 0 ? (
+                                paginatedExpenses.map(expense => (
                                     <tr key={expense._id}>
                                         <td>{new Date(expense.date).toLocaleDateString()}</td>
                                         <td>{expense.type.toUpperCase()}</td>
@@ -499,8 +475,24 @@ const Dashboard = () => {
                         </tbody>
                     </table>
                 </div>
+                {totalExpensePages > 1 && (
+                    <nav>
+                        <ul className="pagination justify-content-center mt-3">
+                            <li className={`page-item ${expensePage === 1 ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => setExpensePage(p => p - 1)}>Previous</button>
+                            </li>
+                            {Array.from({ length: totalExpensePages }, (_, i) => (
+                                <li key={i} className={`page-item ${expensePage === i + 1 ? 'active' : ''}`}>
+                                    <button className="page-link" onClick={() => setExpensePage(i + 1)}>{i + 1}</button>
+                                </li>
+                            ))}
+                            <li className={`page-item ${expensePage === totalExpensePages ? 'disabled' : ''}`}>
+                                <button className="page-link" onClick={() => setExpensePage(p => p + 1)}>Next</button>
+                            </li>
+                        </ul>
+                    </nav>
+                )}
             </div>
-
 
             {/* Modals for Adding Entries */}
             <ExpenseModal
@@ -517,7 +509,6 @@ const Dashboard = () => {
                 onAlert={handleNewServiceAlert}
                 onExpenseAdded={onExpenseAdded} // Pass the onExpenseAdded function here
             />
-
         </div>
     );
 };

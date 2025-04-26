@@ -3,23 +3,6 @@ import axios from 'axios';
 import { getAuthHeaders } from '../../utils/auth';
 
 
-// 🔧 Global Service Types List (Admin-Managed) with Default Reminders
-// const globalServiceTypes = [
-//     { type: 'Oil and Oil Filter Change', odometerInterval: 5000, timeIntervalMonths: 6 },
-//     { type: 'Preventive Maintenance Service (PMS)', odometerInterval: 10000, timeIntervalMonths: 6 },
-//     { type: 'Tire Rotation', odometerInterval: 10000, timeIntervalMonths: 12 },
-//     { type: 'Brake Inspection', odometerInterval: 10000, timeIntervalMonths: 12 },
-//     { type: 'Cabin Air Filter Replacement', odometerInterval: 15000, timeIntervalMonths: 12 },
-//     { type: 'Air Filter Replacement', odometerInterval: 15000, timeIntervalMonths: 12 },
-//     { type: 'Brake Fluid Replacement', odometerInterval: 30000, timeIntervalMonths: 24 },
-//     { type: 'Transmission Fluid Change', odometerInterval: 60000, timeIntervalMonths: 48 },
-//     { type: 'Coolant Flush', odometerInterval: 50000, timeIntervalMonths: 24 },
-//     { type: 'Spark Plug Replacement', odometerInterval: 30000, timeIntervalMonths: 24 },
-//     { type: 'Timing Belt Replacement', odometerInterval: 100000, timeIntervalMonths: 60 },
-//     { type: 'Battery Replacement', odometerInterval: 50000, timeIntervalMonths: 36 },
-//     { type: 'Waxing', odometerInterval: 0, timeIntervalMonths: 6 }
-// ];
-
 const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => {
     const [odometer, setOdometer] = useState('');
     const [totalCost, setTotalCost] = useState('');
@@ -68,7 +51,7 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
             const odometerInterval = customOdometerInterval;
             const timeIntervalMonths = customTimeInterval;
 
-            // 📥 Prepare the reminder payload only if reminders are enabled
+            // Prepare the reminder payload only if reminders are enabled
             let reminderToSend = null;
 
             if (enableReminder) {
@@ -107,17 +90,17 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                 getAuthHeaders()
             );
 
-            // ✅ Handle Alert if Present
+            // Handle Alert if Present
             if (response.data.serviceAlerts && onAlert) {
                 onAlert(response.data.serviceAlerts);
             }
 
-            // ✅ Refresh Data & Close Modal
+            // Refresh Data & Close Modal
             onExpenseAdded();
             onClose();
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                // ✅ Duplicate detected: Show confirmation modal
+                // Duplicate detected: Show confirmation modal
                 setDuplicateService(err.response.data.duplicate);
                 setShowDuplicateModal(true);
             } else {

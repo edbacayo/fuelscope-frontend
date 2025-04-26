@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'; // ✅ Import FontAwesome icons
 
 const SummaryCard = ({ title, value, type }) => {
-    // 🎨 Define colors based on the summary type
+    // Define colors based on the summary type
     const getCardColor = () => {
         switch (type) {
             case 'fuel':
@@ -24,7 +24,7 @@ const SummaryCard = ({ title, value, type }) => {
         }
     };
 
-    // 🚗 Define icons based on the summary type
+    // Define icons based on the summary type
     const getIcon = () => {
         switch (type) {
             case 'fuel':
@@ -40,7 +40,7 @@ const SummaryCard = ({ title, value, type }) => {
         }
     };
 
-    // 💰 Format currency with fallback
+    // Format currency with fallback
     const formatCurrency = (amount) => {
         const numericValue = parseFloat(amount);
         if (isNaN(numericValue)) return '₱0.00'; // ✅ Handle invalid values

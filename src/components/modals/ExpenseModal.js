@@ -43,7 +43,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                     getAuthHeaders()
                 );
                 if (response.data && response.data.length > 0) {
-                    setFuelBrands(response.data.map(b => b.name));
+                    setFuelBrands(response.data.filter(b => b.isActive).map(b => b.name));
                     setFuelBrand(response.data[5].name);
                 }
             } catch (error) {
