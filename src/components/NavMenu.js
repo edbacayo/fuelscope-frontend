@@ -69,8 +69,8 @@ export default function NavMenu() {
                                 </li>
                                 <li className="nav-item">
                                     <button
-                                        className="nav-link"
-                                        onClick={() => navigate('/dashboard')}
+                                        className={`nav-link ${location.pathname.startsWith('/manage-vehicles') ? 'active' : ''}`}
+                                        onClick={() => navigate('/manage-vehicles')}
                                         data-bs-dismiss="offcanvas"
                                     >
                                         <i className="bi bi-car-front-fill me-2"></i>Manage Vehicles

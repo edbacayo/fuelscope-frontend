@@ -202,7 +202,7 @@ const Dashboard = () => {
 
     const averageEfficiency = count > 0 ? totalEfficiency / count : 0;
 
-    // 🔢 Calculate totals based on filters
+    // Calculate totals based on filters
     const totalFuelCost = filteredExpenses
         .filter((entry) => entry.type === 'fuel')
         .reduce((acc, curr) => acc + (curr.totalCost || 0), 0);
@@ -219,14 +219,14 @@ const Dashboard = () => {
         .filter((entry) => entry.type === 'registration')
         .reduce((acc, curr) => acc + (curr.totalCost || 0), 0);
 
-    // ✅ Generate a list of years dynamically
+    // Generate a list of years dynamically
     const years = [
-        0, // ✅ 0 will represent "All Years"
+        0, // 0 will represent "All Years"
         ...Array.from({ length: 10 }, (_, index) => new Date().getFullYear() - index)
     ];
 
     const months = [
-        { value: 0, name: 'All Months' }, // ✅ Show all months
+        { value: 0, name: 'All Months' }, // Show all months
         { value: 1, name: 'January' },
         { value: 2, name: 'February' },
         { value: 3, name: 'March' },
@@ -301,7 +301,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* 📅 Year & Month Filters */}
+            {/* Year & Month Filters */}
             <div className="sticky-top bg-white py-2 shadow-sm" style={{ zIndex: 1020 }}>
                 <div className="container d-flex flex-wrap align-items-center justify-content-between">
                     <div className="d-flex flex-wrap">
@@ -326,7 +326,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* 🔲 Responsive Summary Cards with Icons & Tooltips */}
+            {/* Responsive Summary Cards with Icons & Tooltips */}
             <div className="row g-3">
                 {/* Fuel Cost */}
                 <div className="col-lg-3 col-md-6 col-6 d-flex">

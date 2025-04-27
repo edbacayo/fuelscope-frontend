@@ -7,6 +7,7 @@ import NoVehicles from './pages/NoVehicles';
 import NotFound from './pages/NotFound';
 import RedirectToFirstVehicle from './components/RedirectToFirstVehicle';
 import RootRedirect from './components/RootRedirect';
+import ManageVehicles from './pages/ManageVehicles';
 import { FilterProvider } from './context/FilterContext';
 import NavMenu from './components/NavMenu';
 
@@ -77,6 +78,12 @@ function App() {
                             </PrivateRoute>
                         }
                     />
+
+                    <Route path="/manage-vehicles" element={
+                        <PrivateRoute>
+                            <ManageVehicles />
+                        </PrivateRoute>
+                    } />
 
                     <Route path="/admin" element={<AdminPanel />} />
 

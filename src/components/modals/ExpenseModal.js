@@ -54,7 +54,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
         if (show) fetchFuelBrands(); // fetch only when modal is open
     }, [show]);
 
-    // ✅ Handle Form Submission with Alert Detection
+    // Handle Form Submission with Alert Detection
     const handleSubmit = async (e, forceAdd = false) => {
         e.preventDefault();
         try {
@@ -69,7 +69,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
             };
 
             if (forceAdd) {
-                expenseData.forceAdd = true; // ✅ This flag is used in the backend but NOT stored
+                expenseData.forceAdd = true; // This flag is used in the backend but NOT stored
             }
 
             const response = await axios.post(
@@ -78,7 +78,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                 getAuthHeaders()
             );
 
-            // ✅ Handle Alert if Present
+            // Handle Alert if Present
             if (response.data.alert && onAlert) {
                 onAlert(response.data.alert);
             }
@@ -88,7 +88,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
             onClose(); // Close modal after successful submission
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                // ✅ Handle duplicate detection properly
+                // Handle duplicate detection properly
                 setDuplicateExpense(err.response.data.duplicate);
                 setShowDuplicateModal(true);
             } else {
@@ -145,7 +145,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                     />
                                 </div>
 
-                                {/* ✅ Fuel-specific fields */}
+                                {/* Fuel-specific fields */}
                                 {type === 'fuel' && (
                                     <>
                                         {/* Fuel Brand Dropdown */}
@@ -178,7 +178,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                     </>
                                 )}
 
-                                {/* ✅ Notes Field (Optional) */}
+                                {/* Notes Field (Optional) */}
                                 <div className="mb-3">
                                     <label>Notes (Optional)</label>
                                     <textarea
@@ -190,7 +190,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                     ></textarea>
                                 </div>
 
-                                {/* ✅ Date Field with Default Value */}
+                                {/* Date Field with Default Value */}
                                 <div className="mb-3">
                                     <label>Date</label>
                                     <input
@@ -217,7 +217,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                 </div>
             </div>
 
-            {/* 🔄 Duplicate Confirmation Modal (Only Shows When Needed) */}
+            {/* Duplicate Confirmation Modal (Only Shows When Needed) */}
             {showDuplicateModal && (
                 <div className="modal show d-block" tabIndex="-1">
                     <div className="modal-dialog">
