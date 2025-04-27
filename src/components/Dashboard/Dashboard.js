@@ -29,12 +29,7 @@ const Dashboard = () => {
     // Use useCallback to memoize fetchExpenses function to prevent unnecessary re-renders
     const fetchExpenses = useCallback(async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await api.get(`/api/expenses/${vehicleId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response = await api.get(`/api/expenses/${vehicleId}`);
 
             setExpenses(response.data);
 
@@ -57,11 +52,7 @@ const Dashboard = () => {
 
     const fetchUpcomingReminders = useCallback(async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await api.get(`/api/vehicles/${vehicleId}/reminders`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
+            const response = await api.get(`/api/vehicles/${vehicleId}/reminders`);
             setUpcomingReminders(response.data);
         } catch (error) {
             console.error('Error fetching upcoming reminders:', error);
@@ -83,10 +74,7 @@ const Dashboard = () => {
         if (!window.confirm('Are you sure you want to delete this expense?')) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await api.delete(`/api/expenses/${expenseId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete(`/api/expenses/${expenseId}`);
 
             // Refresh the expense list after deletion
             onExpenseDeleted();
@@ -104,10 +92,7 @@ const Dashboard = () => {
     // fetch vehicle data to check service reminders
     const fetchVehicleData = useCallback(async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await api.get(`/api/vehicles/${vehicleId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get(`/api/vehicles/${vehicleId}`);
 
             const vehicle = response.data;
             checkServiceReminders(vehicle.serviceReminders, vehicle.odometer);
@@ -344,7 +329,7 @@ const Dashboard = () => {
             {/* 🔲 Responsive Summary Cards with Icons & Tooltips */}
             <div className="row g-3">
                 {/* Fuel Cost */}
-                <div className="col-lg-3 col-md-6 col-sm-12 d-flex">
+                <div className="col-lg-3 col-md-6 col-6 d-flex">
                     <div className="card shadow-sm p-3 text-center flex-grow-1">
                         <h5 className="card-title">
                             <i className="bi bi-fuel-pump"></i> Total Fuel Cost
@@ -360,7 +345,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Service Cost */}
-                <div className="col-lg-3 col-md-6 col-sm-12 d-flex">
+                <div className="col-lg-3 col-md-6 col-6 d-flex">
                     <div className="card shadow-sm p-3 text-center flex-grow-1">
                         <h5 className="card-title">
                             <i className="bi bi-wrench"></i> Total Service Cost
@@ -376,7 +361,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Insurance Cost */}
-                <div className="col-lg-3 col-md-6 col-sm-12 d-flex">
+                <div className="col-lg-3 col-md-6 col-6 d-flex">
                     <div className="card shadow-sm p-3 text-center flex-grow-1">
                         <h5 className="card-title">
                             <i className="bi bi-file-earmark-check"></i> Insurance Cost
@@ -392,7 +377,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Registration Cost */}
-                <div className="col-lg-3 col-md-6 col-sm-12 d-flex">
+                <div className="col-lg-3 col-md-6 col-6 d-flex">
                     <div className="card shadow-sm p-3 text-center flex-grow-1">
                         <h5 className="card-title">
                             <i className="bi bi-file-text"></i> Registration Cost
