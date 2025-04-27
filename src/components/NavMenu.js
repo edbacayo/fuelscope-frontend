@@ -32,7 +32,7 @@ export default function NavMenu() {
                         <i className="bi bi-list fs-4"></i>
                     </button>
                     <span className="navbar-brand mb-0 h1 ms-2">
-                        <i className="bi bi-speedometer2 me-1"></i>CarTracker
+                        <i className="bi bi-speedometer2 me-1"></i>FuelScope
                     </span>
                 </div>
             </nav>
@@ -45,7 +45,7 @@ export default function NavMenu() {
             >
                 <div className="offcanvas-header">
                     <h5 className="offcanvas-title" id="sidebarLabel">
-                        <i className="bi bi-speedometer2 me-1"></i>CarTracker
+                        <i className="bi bi-speedometer2 me-1"></i>FuelScope
                     </h5>
                     <button
                         type="button"

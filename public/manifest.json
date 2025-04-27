@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FuelScope",
+  "name": "FuelScope",
+  "description": "Zoom in on fuel & maintenance data",
   "icons": [
     {
       "src": "favicon.ico",

@@ -170,7 +170,7 @@ const Dashboard = () => {
             setShowFuellyModal(true);
             navigate(location.pathname, { replace: true });
         }
-    }, [location.search, navigate]);
+    }, [location.search, navigate, location.pathname]);
 
     const filteredExpenses = expenses.filter((entry) => {
         const entryDate = new Date(entry.date);
