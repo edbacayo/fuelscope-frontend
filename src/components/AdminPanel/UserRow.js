@@ -12,6 +12,7 @@ export default function UserRow({ user, onRoleChange, onDisable, onDelete }) {
           onChange={e => onRoleChange(user._id, e.target.value)}
         >
           <option value="user">User</option>
+          <option value="premium">Premium</option>
           <option value="admin">Admin</option>
         </select>
       </td>
