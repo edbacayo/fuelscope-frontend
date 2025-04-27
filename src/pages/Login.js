@@ -20,7 +20,7 @@ const Login = () => {
             const { token } = response.data;
             localStorage.setItem('token', token);
 
-            // ✅ Fetch user's vehicles after login
+            // Fetch user's vehicles after login
             const vehicleResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, {
                 headers: {
                     Authorization: `Bearer ${token}`,

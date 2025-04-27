@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import VehicleSelector from './VehicleSelector';
 import FuelChart from './FuelChart';
 import ExpenseModal from '../modals/ExpenseModal';
@@ -12,12 +12,14 @@ import api from '../../utils/api';
 
 const Dashboard = () => {
     const { vehicleId } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
     const { selectedYear, setSelectedYear, selectedMonth, setSelectedMonth } = useContext(FilterContext); // Get filter values from context
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [showServiceModal, setShowServiceModal] = useState(false);
-    const [showFuellyModal, setShowFuellyModal] = useState(false);
+    const [showFuellyModal, setShowFuellyModal] = useState(false); // Modal state for Fuelly import
     const [efficiencyAlert, setEfficiencyAlert] = useState(null); // Alert State
     const [serviceAlerts, setServiceAlerts] = useState([]);
     const [upcomingReminders, setUpcomingReminders] = useState([]);
@@ -161,6 +163,15 @@ const Dashboard = () => {
         setServiceAlerts(updatedAlerts);
     };
 
+    // open Fuelly modal when URL has ?import=fuelly
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('import') === 'fuelly') {
+            setShowFuellyModal(true);
+            navigate(location.pathname, { replace: true });
+        }
+    }, [location.search, navigate]);
+
     const filteredExpenses = expenses.filter((entry) => {
         const entryDate = new Date(entry.date);
         const entryYear = entryDate.getFullYear();
@@ -249,10 +260,10 @@ const Dashboard = () => {
 
     return (
         <div className="container mt-4">
-            {/* 🚗 Vehicle Selector */}
+            {/* Vehicle Selector */}
             <VehicleSelector />
 
-            {/* 🚨 Fuel Efficiency Alert Notification */}
+            {/* Fuel Efficiency Alert Notification */}
             {efficiencyAlert && (
                 <div className="alert alert-warning alert-dismissible fade show mt-3" role="alert">
                     {efficiencyAlert}
@@ -277,7 +288,7 @@ const Dashboard = () => {
                 ))
             )}
 
-            {/* 📌 Upcoming Service Reminders */}
+            {/* Upcoming Service Reminders */}
             <div className="accordion mb-4" id="reminderAccordion">
                 <div className="accordion-item">
                     <h2 className="accordion-header" id="headingReminders">
@@ -493,36 +504,28 @@ const Dashboard = () => {
                         </ul>
                     </nav>
                 )}
-                {/* Import from Fuelly link */}
-                <div className="text-center my-3">
-                    <button className="btn btn-link p-0"
-                        onClick={() => setShowFuellyModal(true)}>
-                        <small>Import from Fuelly</small>
-                    </button>
-                </div>
+                {/* Modals for Adding Entries */}
+                <ExpenseModal
+                    show={showExpenseModal}
+                    onClose={() => setShowExpenseModal(false)}
+                    vehicleId={vehicleId}
+                    onAlert={handleNewExpenseAlert}
+                    onExpenseAdded={onExpenseAdded} // Pass re-fetch handler here
+                />
+                <ServiceModal
+                    show={showServiceModal}
+                    onClose={() => setShowServiceModal(false)}
+                    vehicleId={vehicleId}
+                    onAlert={handleNewServiceAlert}
+                    onExpenseAdded={onExpenseAdded} // Pass the onExpenseAdded function here
+                />
+                <FuellyImportModal
+                    show={showFuellyModal}
+                    onClose={() => setShowFuellyModal(false)}
+                    vehicleId={vehicleId}
+                    onImport={onExpenseAdded}
+                />
             </div>
-
-            {/* Modals for Adding Entries */}
-            <ExpenseModal
-                show={showExpenseModal}
-                onClose={() => setShowExpenseModal(false)}
-                vehicleId={vehicleId}
-                onAlert={handleNewExpenseAlert}
-                onExpenseAdded={onExpenseAdded} // Pass re-fetch handler here
-            />
-            <ServiceModal
-                show={showServiceModal}
-                onClose={() => setShowServiceModal(false)}
-                vehicleId={vehicleId}
-                onAlert={handleNewServiceAlert}
-                onExpenseAdded={onExpenseAdded} // Pass the onExpenseAdded function here
-            />
-            <FuellyImportModal
-                show={showFuellyModal}
-                onClose={() => setShowFuellyModal(false)}
-                vehicleId={vehicleId}
-                onImport={onExpenseAdded}
-            />
         </div>
     );
 };

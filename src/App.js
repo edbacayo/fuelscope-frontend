@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; // ✅ Import useEffect
+import React, { useEffect } from 'react'; // Import useEffect
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import AdminPanel from './pages/AdminPanel/index';
@@ -8,6 +8,7 @@ import NotFound from './pages/NotFound';
 import RedirectToFirstVehicle from './components/RedirectToFirstVehicle';
 import RootRedirect from './components/RootRedirect';
 import { FilterProvider } from './context/FilterContext';
+import NavMenu from './components/NavMenu';
 
 // Enable Bootstrap icons & tooltips
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -28,9 +29,18 @@ function App() {
         });
     }, []);
 
+    const token = localStorage.getItem('token');
+    let userRole;
+    try {
+        userRole = JSON.parse(atob(token.split('.')[1])).role;
+    } catch {
+        userRole = null;
+    }
+
     return (
         <FilterProvider>
             <Router>
+                <NavMenu userRole={userRole} />
                 <Routes>
                     {/* Handle root route */}
                     <Route path="/" element={<RootRedirect />} />
@@ -70,7 +80,7 @@ function App() {
 
                     <Route path="/admin" element={<AdminPanel />} />
 
-                    {/* 🚫 Catch-all for 404 Not Found */}
+                    {/* Catch-all for 404 Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </Router>
