@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import DisclaimerModal from '../components/modals/DisclaimerModal';
 
 const Login = () => {
+    const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+    const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const [email, setEmail] = useState('johndoe@example.com');
     const [password, setPassword] = useState('password123');
     const [error, setError] = useState('');
@@ -44,8 +47,13 @@ const Login = () => {
     // Registration handler
     const handleRegister = async (e) => {
         e.preventDefault();
+        if (!disclaimerChecked) {
+            setError('You must agree to the Disclaimer before registering.');
+            return;
+        }
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, { name, email, password, website });
+            const agreedToDisclaimerAt = new Date().toISOString(); // Use local time for now
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, { name, email, password, website, agreedToDisclaimerAt });
             const { token } = response.data;
             localStorage.setItem('token', token);
             const vehicleResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, { headers: { Authorization: `Bearer ${token}` } });
@@ -64,6 +72,7 @@ const Login = () => {
         setPassword('');
         setWebsite('');
         setError('');
+        setDisclaimerChecked(false);
     };
 
     return (
@@ -87,9 +96,34 @@ const Login = () => {
                 {isRegister && (
                     <input type="text" name="website" autoComplete="off" style={{ display: 'none' }} value={website} onChange={(e) => setWebsite(e.target.value)} />
                 )}
+                {/* Disclaimer Agreement Checkbox */}
+                {isRegister && (
+                    <div className="mb-3 form-check">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="disclaimerCheck"
+                            checked={disclaimerChecked}
+                            onChange={e => setDisclaimerChecked(e.target.checked)}
+                            required
+                        />
+                        <label className="form-check-label" htmlFor="disclaimerCheck">
+                            I have read and agree to the{' '}
+                            <button
+                                type="button"
+                                className="btn btn-link p-0 align-baseline"
+                                style={{ fontSize: 'inherit' }}
+                                onClick={() => setShowDisclaimerModal(true)}
+                            >
+                                Disclaimer
+                            </button>.
+                        </label>
+                    </div>
+                )}
                 {error && <p className="text-danger">{error}</p>}
-                <button type="submit" className="btn btn-primary w-100">{isRegister ? 'Register' : 'Login'}</button>
+                <button type="submit" className="btn btn-primary w-100" disabled={isRegister && !disclaimerChecked}>{isRegister ? 'Register' : 'Login'}</button>
                 <button type="button" className="btn btn-secondary w-100 mt-2" onClick={handleClear}>Clear</button>
+                <DisclaimerModal show={showDisclaimerModal} onHide={() => setShowDisclaimerModal(false)} />
             </form>
             <p className="mt-3 text-center">
                 {isRegister ? 'Already have an account?' : "Don't have an account?"}
