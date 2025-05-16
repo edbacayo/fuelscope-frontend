@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ExpenseCsvModal from './modals/ExpenseCsvModal';
 import 'bootstrap/js/dist/offcanvas';
 
 export default function NavMenu() {
@@ -37,6 +38,17 @@ export default function NavMenu() {
                 </div>
             </nav>
 
+            {/* Expense CSV Modal integration */}
+            {location.pathname.startsWith('/dashboard/') && location.search.includes('import=csv') && (
+                <ExpenseCsvModal
+                    show={true}
+                    onClose={() => {
+                        const url = location.pathname;
+                        navigate(url, { replace: true });
+                    }}
+                    vehicleId={location.pathname.split('/')[2]}
+                />
+            )}
             <div
                 className="offcanvas offcanvas-start"
                 tabIndex={-1}
@@ -83,7 +95,18 @@ export default function NavMenu() {
                                             onClick={() => navigate(`${location.pathname}?import=fuelly`)}
                                             data-bs-dismiss="offcanvas"
                                         >
-                                            <i className="bi bi-file-earmark-arrow-up me-2"></i>Import from Fuelly
+                                            <i className="bi bi-file-earmark-arrow-down me-2"></i>Import from Fuelly
+                                        </button>
+                                    </li>
+                                )}
+                                {location.pathname.startsWith('/dashboard') && (
+                                    <li className="nav-item">
+                                        <button
+                                            className="nav-link"
+                                            onClick={() => navigate(`${location.pathname}?import=csv`)}
+                                            data-bs-dismiss="offcanvas"
+                                        >
+                                            <i className="bi bi-file-earmark-arrow-down me-2"></i>Import/Export CSV
                                         </button>
                                     </li>
                                 )}
