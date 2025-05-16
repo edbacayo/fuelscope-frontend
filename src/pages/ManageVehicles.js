@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import api from '../utils/api';
 import NoVehicles from './NoVehicles';
 import AddVehicleModal from '../components/modals/AddVehicleModal';
@@ -14,11 +14,34 @@ const ManageVehicles = () => {
     try { role = JSON.parse(atob(token.split('.')[1])).role; } catch { role = null; }
     const maxVehicles = role === 'premium' ? 2 : role === 'user' ? 1 : Infinity;
 
-    const addToast = (message, variant = 'success') => {
+    const addToast = useCallback((message, variant = 'success') => {
       const id = Date.now();
       setToasts(prev => [...prev, { id, message, variant }]);
       setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 5000);
-    };
+    }, []);
+
+    const fetchVehicles = useCallback(async () => {
+        try {
+            setLoading(true);
+            const res = await api.get('/api/vehicles');
+            setVehicles(res.data.map(v => ({
+                ...v,
+                editedName: v.name,
+                editedOdometer: String(v.odometer),
+                isEditing: false,
+                hasChanged: false,
+            })));
+        } catch (err) {
+            console.error(err);
+            addToast(err.response?.data?.error || 'Error fetching vehicles', 'danger');
+        } finally {
+            setLoading(false);
+        }
+    }, [addToast]);
+
+    useEffect(() => {
+      fetchVehicles();
+    }, [fetchVehicles]);
 
     // Inline edit handlers
     const handleEdit = id => {
@@ -48,26 +71,7 @@ const ManageVehicles = () => {
       }));
     };
 
-    const fetchVehicles = async () => {
-        try {
-            setLoading(true);
-            const res = await api.get('/api/vehicles');
-            setVehicles(res.data.map(v => ({
-                ...v,
-                editedName: v.name,
-                editedOdometer: String(v.odometer),
-                isEditing: false,
-                hasChanged: false,
-            })));
-        } catch (err) {
-            console.error(err);
-            addToast(err.response?.data?.error || 'Error fetching vehicles', 'danger');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => { fetchVehicles(); }, []);
+    useEffect(() => { fetchVehicles(); }, [fetchVehicles]);
 
     const handleUpdate = async (id, name, odometer) => {
         try {

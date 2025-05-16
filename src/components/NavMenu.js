@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ExpenseCsvModal from './modals/ExpenseCsvModal';
+import ChangePasswordModal from './modals/ChangePasswordModal';
 import 'bootstrap/js/dist/offcanvas';
 
 export default function NavMenu() {
@@ -14,6 +15,7 @@ export default function NavMenu() {
     } catch {
         userRole = null;
     }
+    const [showChangePw, setShowChangePw] = React.useState(false);
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login', { replace: true });
@@ -121,6 +123,15 @@ export default function NavMenu() {
                                         </button>
                                     </li>
                                 )}
+                                <li className="nav-item">
+                                    <button
+                                        className="nav-link"
+                                        onClick={() => setShowChangePw(true)}
+                                        data-bs-dismiss="offcanvas"
+                                    >
+                                        <i className="bi bi-key me-2"></i>Change Password
+                                    </button>
+                                </li>
                             </>
                         ) : (
                             <li className="nav-item">
@@ -150,6 +161,7 @@ export default function NavMenu() {
                     </div>
                 </div>
             </div>
+        <ChangePasswordModal show={showChangePw} onHide={() => setShowChangePw(false)} />
         </>
     );
 }
