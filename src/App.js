@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; // Import useEffect
+import React, { useEffect, useState } from 'react'; // Import useEffect and useState
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import AdminPanel from './pages/AdminPanel/index';
@@ -10,6 +10,7 @@ import RootRedirect from './components/RootRedirect';
 import ManageVehicles from './pages/ManageVehicles';
 import { FilterProvider } from './context/FilterContext';
 import NavMenu from './components/NavMenu';
+import ChangePasswordModal from './components/modals/ChangePasswordModal';
 
 // Enable Bootstrap icons & tooltips
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -33,18 +34,40 @@ function App() {
     const token = localStorage.getItem('token');
     let userRole;
     try {
-        userRole = JSON.parse(atob(token.split('.')[1])).role;
+        userRole = token ? JSON.parse(atob(token.split('.')[1])).role : null;
     } catch {
         userRole = null;
     }
 
+    // Check mustResetPassword from localStorage
+    const [forcePwModal, setForcePwModal] = useState(token && localStorage.getItem('mustResetPassword') === 'true');
+
+    useEffect(() => {
+        function checkMustReset() {
+            const t = localStorage.getItem('token');
+            setForcePwModal(t && localStorage.getItem('mustResetPassword') === 'true');
+        }
+        window.addEventListener('mustResetPassword', checkMustReset);
+        return () => window.removeEventListener('mustResetPassword', checkMustReset);
+    }, []);
+
+    const handlePwChanged = () => {
+        localStorage.removeItem('mustResetPassword');
+        setForcePwModal(false);
+        window.location.reload(); // force reload to reset app state
+    };
+
     return (
-        <FilterProvider>
-            <Router>
-                <NavMenu userRole={userRole} />
-                <Routes>
-                    {/* Handle root route */}
-                    <Route path="/" element={<RootRedirect />} />
+        <>
+            {token && (
+                <ChangePasswordModal show={forcePwModal} onHide={() => {}} force onChanged={handlePwChanged} />
+            )}
+            <FilterProvider>
+                    <Router>
+                        <NavMenu userRole={userRole} />
+                        <Routes>
+                            {/* Handle root route */}
+                            <Route path="/" element={<RootRedirect />} />
 
                     {/* Login route */}
                     <Route path="/login" element={<Login />} />
@@ -92,6 +115,7 @@ function App() {
                 </Routes>
             </Router>
         </FilterProvider>
+        </>
     );
 }
 

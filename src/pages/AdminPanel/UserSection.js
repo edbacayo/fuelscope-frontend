@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import UserRow from '../../components/AdminPanel/UserRow';
+import ResetConfirmationModal from '../../components/modals/ResetConfirmationModal';
 import PaginationControls from '../../components/AdminPanel/PaginationControls';
 
 export default function UserSection() {
@@ -55,6 +56,20 @@ export default function UserSection() {
         }
     };
 
+    // Reset password modal state
+    const [showResetModal, setShowResetModal] = useState(false);
+    const [resetTempPassword, setResetTempPassword] = useState('');
+
+    const resetUserPassword = async (id) => {
+        try {
+            const response = await api.post(`/api/admin/users/${id}/reset-password`);
+            setResetTempPassword(response.data.tempPassword);
+            setShowResetModal(true);
+        } catch (error) {
+            alert(error.response?.data?.message || 'Error resetting password');
+        }
+    };
+
     const deleteUser = async (id) => {
         try {
             await api.delete(`/api/admin/users/${id}`);
@@ -93,8 +108,14 @@ export default function UserSection() {
     const displayUsers = filteredUsers.slice((userPage - 1) * ITEMS_PER_PAGE, userPage * ITEMS_PER_PAGE);
 
     return (
-        <section>
-            <h2>Admin Panel - User Management</h2>
+        <>
+            <ResetConfirmationModal
+                show={showResetModal}
+                onHide={() => setShowResetModal(false)}
+                tempPassword={resetTempPassword}
+            />
+            <section>
+                <h2>Admin Panel - User Management</h2>
             <div className="row mb-2">
                 <div className="col-sm-4">
                     <input type="text" className="form-control" placeholder="Search Users" value={userSearch}
@@ -119,11 +140,13 @@ export default function UserSection() {
                             onRoleChange={updateUserRole}
                             onDisable={disableUser}
                             onDelete={deleteUser}
+                            onReset={resetUserPassword}
                         />
                     ))}
                 </tbody>
             </table>
             <PaginationControls current={userPage} total={totalUserPages} onPageChange={setUserPage} />
         </section>
+        </>
     );
 }

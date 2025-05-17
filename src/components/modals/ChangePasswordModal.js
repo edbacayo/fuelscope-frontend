@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import api from '../../utils/api';
 
-export default function ChangePasswordModal({ show, onHide }) {
+export default function ChangePasswordModal({ show, onHide, force = false, onChanged }) {
   const [oldPw, setOld] = useState('');
   const [newPw, setNew] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -17,15 +17,21 @@ export default function ChangePasswordModal({ show, onHide }) {
         confirmPassword: confirm
       });
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      if (onChanged) onChanged();
+      else window.location.href = '/login';
     } catch (err) {
       setMsg(err.response?.data?.message || 'Error');
     }
   };
 
   return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton><Modal.Title>Change Password</Modal.Title></Modal.Header>
+    <Modal
+      show={show}
+      onHide={force ? undefined : onHide}
+      backdrop={force ? 'static' : true}
+      keyboard={!force}
+    >
+      <Modal.Header closeButton={!force}><Modal.Title>Change Password</Modal.Title></Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3"><Form.Label>Old Password</Form.Label>

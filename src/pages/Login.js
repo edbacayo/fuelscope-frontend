@@ -26,6 +26,24 @@ const Login = () => {
             const { token } = response.data;
             localStorage.setItem('token', token);
 
+            // Decode JWT and check mustResetPassword
+            let mustReset = false;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload.mustResetPassword) {
+                    mustReset = true;
+                    localStorage.setItem('mustResetPassword', 'true');
+                    window.dispatchEvent(new Event('mustResetPassword'));
+                } else {
+                    localStorage.removeItem('mustResetPassword');
+                }
+            } catch { localStorage.removeItem('mustResetPassword'); }
+
+            if (mustReset) {
+                navigate('/'); // stay on root, let App.js force modal
+                return;
+            }
+
             // Fetch user's vehicles after login
             const vehicleResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, {
                 headers: {

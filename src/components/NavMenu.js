@@ -18,6 +18,7 @@ export default function NavMenu() {
     const [showChangePw, setShowChangePw] = React.useState(false);
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('mustResetPassword');
         navigate('/login', { replace: true });
     };
 

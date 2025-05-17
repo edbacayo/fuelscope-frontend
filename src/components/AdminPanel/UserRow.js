@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function UserRow({ user, onRoleChange, onDisable, onDelete }) {
+export default function UserRow({ user, onRoleChange, onDisable, onDelete, onReset }) {
   return (
     <tr>
       <td>{user.name}</td>
@@ -26,6 +26,12 @@ export default function UserRow({ user, onRoleChange, onDisable, onDelete }) {
             Disable
           </button>
         )}
+        <button
+          className="btn btn-info btn-sm me-1"
+          onClick={() => onReset(user._id)}
+        >
+          Reset Password
+        </button>
         <button
           className="btn btn-danger btn-sm"
           onClick={() => onDelete(user._id)}
