@@ -6,8 +6,8 @@ import DisclaimerModal from '../components/modals/DisclaimerModal';
 const Login = () => {
     const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
     const [disclaimerChecked, setDisclaimerChecked] = useState(false);
-    const [email, setEmail] = useState('johndoe@example.com');
-    const [password, setPassword] = useState('password123');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [name, setName] = useState('');
     const [website, setWebsite] = useState(''); // honeypot field
