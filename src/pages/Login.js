@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DisclaimerModal from '../components/modals/DisclaimerModal';
+import api from '../utils/api';
 
 const Login = () => {
     const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
@@ -18,7 +18,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+            const response = await api.post(`/api/auth/login`, {
                 email,
                 password,
             });
@@ -45,11 +45,7 @@ const Login = () => {
             }
 
             // Fetch user's vehicles after login
-            const vehicleResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const vehicleResponse = await api.get(`/api/vehicles`);
 
             if (vehicleResponse.data.length > 0) {
                 navigate(`/dashboard/${vehicleResponse.data[0]._id}`);
@@ -71,10 +67,10 @@ const Login = () => {
         }
         try {
             const agreedToDisclaimerAt = new Date().toISOString(); // Use local time for now
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, { name, email, password, website, agreedToDisclaimerAt });
+            const response = await api.post(`/api/auth/register`, { name, email, password, website, agreedToDisclaimerAt });
             const { token } = response.data;
             localStorage.setItem('token', token);
-            const vehicleResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, { headers: { Authorization: `Bearer ${token}` } });
+            const vehicleResponse = await api.get(`/api/vehicles`);
             if (vehicleResponse.data.length > 0) navigate(`/dashboard/${vehicleResponse.data[0]._id}`);
             else navigate('/no-vehicles');
         } catch (err) {
