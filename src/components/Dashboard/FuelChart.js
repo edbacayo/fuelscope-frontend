@@ -3,12 +3,14 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FilterContext } from '../../context/FilterContext'; // ✅ Import Global Filter Context
+import { buildUrl, getBackendUrl } from '../../utils/urlHelper'; // Import URL helper functions
 
 const FuelChart = () => {
     const [fuelData, setFuelData] = useState([]);
     const [loading, setLoading] = useState(true);
     const { vehicleId } = useParams();
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    // Get clean backend URL from helper
+    const backendUrl = getBackendUrl();
 
     // ✅ Use global filter context
     const { selectedYear, selectedMonth } = useContext(FilterContext);
@@ -17,7 +19,7 @@ const FuelChart = () => {
         const fetchFuelData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${backendUrl}/api/expenses/${vehicleId}`, {
+                const response = await axios.get(buildUrl(backendUrl, `/api/expenses/${vehicleId}`), {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
