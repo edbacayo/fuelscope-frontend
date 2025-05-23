@@ -37,19 +37,43 @@ export default function ServiceTypeSection() {
         if (!fields.type.trim()) return alert('Type is required');
         try {
             if (id) {
-                // no update endpoint, delete then add
-                await api.delete(`/api/service-types/${id}`);
+                // Use PUT for update
+                try {
+                    await api.put(`/api/service-types/${id}`, {
+                        type: fields.type,
+                        odometerInterval: Number(fields.odometerInterval),
+                        timeIntervalMonths: Number(fields.timeIntervalMonths)
+                    });
+                } catch (err) {
+                    const resp = err.response;
+                    if (resp && resp.status === 409 && resp.data.needConfirmation) {
+                        if (window.confirm(resp.data.message)) {
+                            await api.put(`/api/service-types/${id}?force=true`, {
+                                type: fields.type,
+                                odometerInterval: Number(fields.odometerInterval),
+                                timeIntervalMonths: Number(fields.timeIntervalMonths)
+                            });
+                        } else {
+                            return;
+                        }
+                    } else {
+                        throw err;
+                    }
+                }
+            } else {
+                // Add new
+                await api.post('/api/service-types', {
+                    type: fields.type,
+                    odometerInterval: Number(fields.odometerInterval),
+                    timeIntervalMonths: Number(fields.timeIntervalMonths)
+                });
             }
-            await api.post('/api/service-types', {
-                type: fields.type,
-                odometerInterval: Number(fields.odometerInterval),
-                timeIntervalMonths: Number(fields.timeIntervalMonths)
-            });
             fetchTypes();
             setEditingId(null);
             setFields({ type: '', odometerInterval: '', timeIntervalMonths: '' });
         } catch (err) {
             console.error(err);
+            alert('Failed to save service type.');
         }
     };
 
