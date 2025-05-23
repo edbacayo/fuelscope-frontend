@@ -58,6 +58,16 @@ bower_components
 .rts2_cache_umd/
 .node_repl_history
 *.tgz
+
+# Editor/project files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+
+# Windows thumbnail cache
+Thumbs.db
 .yarn-integrity
 .cache
 .parcel-cache

@@ -71,6 +71,10 @@ export default function UserSection() {
     };
 
     const deleteUser = async (id) => {
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this user? This action cannot be undone. All vehicles and expenses related to this user will also be permanently deleted.'
+        );
+        if (!confirmed) return;
         try {
             await api.delete(`/api/admin/users/${id}`);
             fetchUsers();
@@ -78,6 +82,7 @@ export default function UserSection() {
             console.error('Error deleting user:', error);
         }
     };
+
 
     // Search, sort & pagination states
     const [userSearch, setUserSearch] = useState('');
