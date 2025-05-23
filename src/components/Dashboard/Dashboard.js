@@ -453,7 +453,7 @@ const Dashboard = () => {
                                             {expense.type === 'registration' && 'Vehicle Registration'}
                                         </td>
                                         <td>₱{expense.totalCost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
-                                        <td>{expense.odometer} km</td>
+                                        <td>{expense.odometer ? `${expense.odometer} km` : 'N/A'}</td>
                                         <td>
                                             <button
                                                 className="btn btn-danger btn-sm"

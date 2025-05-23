@@ -122,16 +122,20 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                 </div>
 
                                 {/* Odometer */}
-                                <div className="mb-3">
-                                    <label>Odometer</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        value={odometer}
-                                        onChange={(e) => setOdometer(e.target.value)}
-                                        required
-                                    />
-                                </div>
+                                {
+                                    (type === 'fuel' || type === 'service') && (
+                                        <div className="mb-3">
+                                            <label>Odometer</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                value={odometer}
+                                                onChange={(e) => setOdometer(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                    )
+                                }
 
                                 {/* Total Cost */}
                                 <div className="mb-3">
@@ -206,7 +210,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                 <button
                                     type="submit"
                                     className="btn btn-primary w-100"
-                                    disabled={!odometer || !totalCost || (type === 'fuel' && (!fuelBrand || !pricePerLiter))}
+                                    disabled={!totalCost || (type === 'fuel' && (!fuelBrand || !pricePerLiter || !odometer))}
                                 >
                                     Add Expense
                                 </button>
