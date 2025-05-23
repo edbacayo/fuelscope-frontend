@@ -47,7 +47,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                     setFuelBrand(response.data[5].name);
                 }
             } catch (error) {
-                console.warn('⚠️ Falling back to default fuel brands. Error fetching:', error.message);
+                console.warn('Falling back to default fuel brands. Error fetching:', error.message);
             }
         };
 
@@ -83,7 +83,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                 onAlert(response.data.alert);
             }
 
-            // 🚀 Trigger re-fetch of expenses after successful submission
+            // Trigger re-fetch of expenses after successful submission
             onExpenseAdded(); // This will re-fetch the expenses in Dashboard and update alerts/reminders
             onClose(); // Close modal after successful submission
         } catch (err) {
@@ -111,7 +111,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                         </div>
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
-                                {/* ✅ Expense Type */}
+                                {/* Expense Type */}
                                 <div className="mb-3">
                                     <label>Type</label>
                                     <select className="form-select" value={type} onChange={(e) => setType(e.target.value)}>
@@ -121,7 +121,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                     </select>
                                 </div>
 
-                                {/* ✅ Odometer */}
+                                {/* Odometer */}
                                 <div className="mb-3">
                                     <label>Odometer</label>
                                     <input
@@ -133,7 +133,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                     />
                                 </div>
 
-                                {/* ✅ Total Cost */}
+                                {/* Total Cost */}
                                 <div className="mb-3">
                                     <label>Total Cost</label>
                                     <input
@@ -202,7 +202,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                     />
                                 </div>
 
-                                {/* ✅ Submit Button */}
+                                {/* Submit Button */}
                                 <button
                                     type="submit"
                                     className="btn btn-primary w-100"
