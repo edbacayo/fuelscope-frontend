@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getAuthHeaders } from '../../utils/auth';
+import api from '../../utils/api';
 
 const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => {
     const [type, setType] = useState('fuel');
@@ -38,10 +37,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
     useEffect(() => {
         const fetchFuelBrands = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/fuel-brands`,
-                    getAuthHeaders()
-                );
+                const response = await api.get('/api/fuel-brands');
                 if (response.data && response.data.length > 0) {
                     setFuelBrands(response.data.filter(b => b.isActive).map(b => b.name));
                     setFuelBrand(response.data[5].name);
@@ -72,11 +68,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                 expenseData.forceAdd = true; // This flag is used in the backend but NOT stored
             }
 
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/expenses`,
-                expenseData,
-                getAuthHeaders()
-            );
+            const response = await api.post('/api/expenses', expenseData);
 
             // Handle Alert if Present
             if (response.data.alert && onAlert) {
@@ -94,6 +86,13 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
             } else {
                 console.error('Error adding expense:', err);
             }
+        }
+    };
+
+    const handleTotalCostChange = (e) => {
+        const value = e.target.value;
+        if (/^\d*\.?\d*$/.test(value)) {
+            setTotalCost(value);
         }
     };
 
@@ -144,7 +143,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                         type="number"
                                         className="form-control"
                                         value={totalCost}
-                                        onChange={(e) => setTotalCost(e.target.value)}
+                                        onChange={handleTotalCostChange}
                                         required
                                     />
                                 </div>
