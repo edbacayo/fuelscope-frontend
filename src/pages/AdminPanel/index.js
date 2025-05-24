@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import UserSection from './UserSection';
+import VehicleSection from './VehicleSection';
 import FuelBrandSection from './FuelBrandSection';
 import ServiceTypeSection from './ServiceTypeSection';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ export default function AdminPanel() {
     return (
         <div className="container mt-4">
             <UserSection />
+            <VehicleSection />
             <FuelBrandSection />
             <ServiceTypeSection />
         </div>
