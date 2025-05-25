@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { FilterContext } from '../../context/FilterContext'; // ✅ Import Global Filter Context
+import { FilterContext } from '../../context/FilterContext'; // Import Global Filter Context
 import { buildUrl, getBackendUrl } from '../../utils/urlHelper'; // Import URL helper functions
 
 const FuelChart = () => {
@@ -12,7 +12,7 @@ const FuelChart = () => {
     // Get clean backend URL from helper
     const backendUrl = getBackendUrl();
 
-    // ✅ Use global filter context
+    // Use global filter context
     const { selectedYear, selectedMonth } = useContext(FilterContext);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ const FuelChart = () => {
                     }
                 });
 
-                // ✅ Filter and format the data based on global filters
+                // Filter and format the data based on global filters
                 const fuelEntries = response.data
                     .filter(entry => entry.type === 'fuel')
                     .map(entry => ({
@@ -36,7 +36,7 @@ const FuelChart = () => {
                         const entryYear = entry.date.getFullYear();
                         const entryMonth = entry.date.getMonth() + 1;
 
-                        // ✅ Apply global filters
+                        // Apply global filters
                         return (
                             (selectedYear === 0 || entryYear === selectedYear) &&
                             (selectedMonth === 0 || entryMonth === selectedMonth)
@@ -44,7 +44,7 @@ const FuelChart = () => {
                     })
                     .sort((a, b) => a.date - b.date); // Sort chronologically
 
-                // ✅ Format dates for the chart
+                // Format dates for the chart
                 setFuelData(
                     fuelEntries.map(entry => ({
                         date: entry.date.toLocaleDateString(),
@@ -58,9 +58,9 @@ const FuelChart = () => {
         };
 
         fetchFuelData();
-    }, [vehicleId, backendUrl, selectedYear, selectedMonth]); // ✅ Re-fetch when filters change
+    }, [vehicleId, backendUrl, selectedYear, selectedMonth]); // Re-fetch when filters change
 
-    // 💡 Custom Tooltip Formatter
+    // Custom Tooltip Formatter
     const tooltipFormatter = (value) => {
         return [`₱${value.toFixed(2)}`, 'Cost'];
     };

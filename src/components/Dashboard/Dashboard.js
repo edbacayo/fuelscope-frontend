@@ -435,6 +435,7 @@ const Dashboard = () => {
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Details</th>
+                                <th>Price per Liter</th>
                                 <th>Total Cost</th>
                                 <th>Odometer</th>
                                 <th>Action</th>
@@ -452,7 +453,8 @@ const Dashboard = () => {
                                             {expense.type === 'insurance' && 'Insurance Payment'}
                                             {expense.type === 'registration' && 'Vehicle Registration'}
                                         </td>
-                                        <td>₱{expense.totalCost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</td>
+                                        <td>{expense.fuelDetails?.pricePerLiter.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? 'N/A'}</td>
+                                        <td>₱{expense.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                         <td>{expense.odometer ? `${expense.odometer} km` : 'N/A'}</td>
                                         <td>
                                             <button
