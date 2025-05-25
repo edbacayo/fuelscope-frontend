@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DisclaimerModal from '../components/modals/DisclaimerModal';
 import api from '../utils/api';
 
 const Login = () => {
+    // Wake up Heroku dyno by pinging the backend on mount
+    useEffect(() => {
+        api.get('/api/ping').catch(() => {});
+    }, []);
     const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
     const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const [email, setEmail] = useState('');
