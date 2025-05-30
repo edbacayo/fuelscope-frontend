@@ -22,10 +22,10 @@ const RedirectToFirstVehicle = () => {
                 });
 
                 if (response.data.length > 0) {
-                    // ✅ Redirect to the first vehicle's dashboard
+                    // Redirect to the first vehicle's dashboard
                     setRedirectPath(`/dashboard/${response.data[0]._id}`);
                 } else {
-                    // 🚫 No vehicles found → Go to no-vehicles page
+                    // No vehicles found → Go to no-vehicles page
                     setRedirectPath('/no-vehicles');
                 }
             } catch (error) {
@@ -37,12 +37,12 @@ const RedirectToFirstVehicle = () => {
         fetchVehicles();
     }, []);
 
-    // ✅ Perform redirection once the path is ready
+    // Perform redirection once the path is ready
     if (redirectPath) {
         return <Navigate to={redirectPath} replace />;
     }
 
-    // 🔄 Loading state until redirection is resolved
+    // Loading state until redirection is resolved
     return <p>Redirecting to your dashboard...</p>;
 };
 
