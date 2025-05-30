@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import api from '../utils/api';
+import axios from 'axios';
 
 const RedirectToFirstVehicle = () => {
     const [redirectPath, setRedirectPath] = useState(null);
@@ -15,7 +15,11 @@ const RedirectToFirstVehicle = () => {
             }
 
             try {
-                const response = await api.get('/vehicles');
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
                 if (response.data.length > 0) {
                     // Redirect to the first vehicle's dashboard
