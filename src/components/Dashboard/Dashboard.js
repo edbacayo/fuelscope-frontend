@@ -52,7 +52,7 @@ const Dashboard = () => {
 
     const fetchUpcomingReminders = useCallback(async () => {
         try {
-            const response = await api.get(`/api/vehicles/${vehicleId}/reminders`);
+            const response = await api.get(`/api/vehicles/${vehicleId}/reminders/upcoming`);
             setUpcomingReminders(response.data);
         } catch (error) {
             console.error('Error fetching upcoming reminders:', error);
