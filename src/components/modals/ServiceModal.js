@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getAuthHeaders } from '../../utils/auth';
+import api from '../../utils/api';
 
 
 const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => {
     const [odometer, setOdometer] = useState('');
     const [totalCost, setTotalCost] = useState('');
     const [notes, setNotes] = useState('');
-    const [enableReminder, setEnableReminder] = useState(true); // ✅ Reminder toggle
+    const [enableReminder, setEnableReminder] = useState(true);
     const [customOdometerInterval, setCustomOdometerInterval] = useState(0);
     const [customTimeInterval, setCustomTimeInterval] = useState(0);
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -19,10 +18,7 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
     useEffect(() => {
         const fetchServiceTypes = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/service-types`,
-                    getAuthHeaders()
-                );
+                const response = await api.get('/api/service-types');
                 setServiceTypes(response.data);
             } catch (error) {
                 console.error('Error fetching service types:', error);
@@ -57,8 +53,8 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
             if (enableReminder) {
                 reminderToSend = {
                     type: serviceType,
-                    odometerInterval, // Use the modified value
-                    timeIntervalMonths, // Use the modified value
+                    odometerInterval,
+                    timeIntervalMonths,
                     lastServiceDate: new Date(),
                     lastServiceOdometer: odometer,
                     isEnabled: true
@@ -83,12 +79,8 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                     : null
             };
 
-            // 📤 Send the service entry with the relevant reminder only
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/expenses`,
-                serviceData,
-                getAuthHeaders()
-            );
+            // Send the service entry with the relevant reminder only
+            const response = await api.post('/api/expenses', serviceData);
 
             // Handle Alert if Present
             if (response.data.serviceAlerts && onAlert) {
