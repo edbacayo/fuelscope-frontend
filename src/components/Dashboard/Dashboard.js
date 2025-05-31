@@ -174,7 +174,7 @@ const Dashboard = () => {
         return filteredExpenses.slice(start, start + EXPENSES_PER_PAGE);
     }, [filteredExpenses, expensePage]);
 
-    // 🚗 Fuel Efficiency Calculations
+    // Fuel Efficiency Calculations
     const fuelEntries = filteredExpenses
         .filter((entry) => entry.type === 'fuel')
         .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -263,11 +263,11 @@ const Dashboard = () => {
             {serviceAlerts && serviceAlerts.length > 0 && (
                 serviceAlerts.map((alert, index) => (
                     <div key={index} className="alert alert-warning alert-dismissible fade show mt-3" role="alert">
-                        {alert} {/* Display individual alert message */}
+                        {alert}
                         <button
                             type="button"
                             className="btn-close"
-                            onClick={() => handleCloseAlert(index)} // Close button functionality
+                            onClick={() => handleCloseAlert(index)}
                         />
                     </div>
                 ))
