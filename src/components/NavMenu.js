@@ -22,6 +22,14 @@ export default function NavMenu() {
         navigate('/login', { replace: true });
     };
 
+    const handleRole = () => {
+        if(userRole === 'admin' || userRole === 'premium') {
+            return userRole;
+        } else {
+            return null;
+        }
+    };
+
     return (
         <>
             <nav className="navbar navbar-light bg-light">
@@ -62,6 +70,10 @@ export default function NavMenu() {
                     <h5 className="offcanvas-title" id="sidebarLabel">
                         <i className="bi bi-speedometer2 me-1"></i>FuelScope
                     </h5>
+                    {(() => {
+                        const role = handleRole();
+                        return role !== null ? <span className="btn btn-dark btn-role ms-1">{role}</span> : null;
+                    })()}
                     <button
                         type="button"
                         className="btn-close"

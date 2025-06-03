@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.btn-role {
+    font-size: .5rem;
+    padding: .25rem;
+    border: 2px solid;
+}
