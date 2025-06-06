@@ -1,30 +1,30 @@
-/* 🔄 Reset browser defaults */
+/* Reset browser defaults */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* 🌐 Global font-family */
+/* Global font-family */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f8f9fa;  /* Light gray background */
   color: #212529;              /* Dark gray text */
 }
 
-/* 📱 Main app container */
+/* Main app container */
 .App {
   padding: 20px;
   text-align: center;
 }
 
-/* 🔠 Heading font styles */
+/* Heading font styles */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
 }
 
-/* 🟦 Card styling */
+/* Card styling */
 .card {
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -34,25 +34,25 @@ h1, h2, h3, h4, h5, h6 {
   word-wrap: break-word;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;  /* 🔥 Ensure content fills space evenly */
-  height: 100%;  /* 🔥 Force cards to maintain equal height */
+  justify-content: space-between;  /* Ensure content fills space evenly */
+  height: 100%;  /* Force cards to maintain equal height */
 }
 
-/* 📝 Card title styling */
+/* Card title styling */
 .card-title {
   font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 10px;
 }
 
-/* 💰 Card text styling (for numbers) */
+/* Card text styling (for numbers) */
 .card-text {
   font-size: 1.5rem;
   font-weight: 500;
   margin-bottom: 0;
 }
 
-/* 📊 Equal-height row layout using Flexbox */
+/* Equal-height row layout using Flexbox */
 .row.g-3 {
   display: flex;
   flex-wrap: wrap;
@@ -65,14 +65,14 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
 }
 
-/* 👔 Button styling */
+/* Button styling */
 .btn {
   border-radius: 8px;
   padding: 10px 20px;
   font-weight: 600;
 }
 
-/* 🎨 Action button colors */
+/* Action button colors */
 .btn-primary {
   background-color: #007bff;
   border-color: #007bff;
@@ -83,12 +83,12 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #28a745;
 }
 
-/* 🚗 Vehicle selector spacing */
+/* Vehicle selector spacing */
 .vehicle-selector {
   margin-bottom: 20px;
 }
 
-/* 📱 Responsive button behavior for smaller screens */
+/* Responsive button behavior for smaller screens */
 @media (max-width: 768px) {
   .btn {
     width: 100%;
@@ -96,19 +96,19 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* 📏 Prevent text overflow inside cards */
+/* Prevent text overflow inside cards */
 .card-body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* 🔗 Remove default link styling */
+/* Remove default link styling */
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* 🔍 Filters styling */
+/* Filters styling */
 .row.mb-3 {
   gap: 10px;
 }
@@ -119,17 +119,17 @@ a {
   font-size: 1rem;
 }
 
-/* 📏 Ensure charts maintain equal height */
+/* Ensure charts maintain equal height */
 .card {
   height: 100%;
 }
 
-/* 🎨 Fuel Efficiency Chart Colors */
+/* Fuel Efficiency Chart Colors */
 .line-efficiency {
   stroke: #28a745;
 }
 
-/* 🔥 Efficiency Cards */
+/* Efficiency Cards */
 .card.bg-light {
   background-color: #e9f7ef;
   border-left: 5px solid #28a745;

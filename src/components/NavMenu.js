@@ -62,8 +62,9 @@ export default function NavMenu() {
             )}
             <div
                 className="offcanvas offcanvas-start"
-                tabIndex={-1}
+                tabIndex="-1"
                 id="sidebar"
+                data-bs-backdrop="static" /* static type */
                 aria-labelledby="sidebarLabel"
             >
                 <div className="offcanvas-header">
