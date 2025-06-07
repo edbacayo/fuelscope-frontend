@@ -320,8 +320,8 @@ const Dashboard = () => {
                         </div>
                     </div>
                     <div className="mb-2">
-                        <button className="btn btn-primary me-2" onClick={() => setShowExpenseModal(true)}>➕ Add Expense</button>
-                        <button className="btn btn-success" onClick={() => setShowServiceModal(true)}>🛠️ Add Service</button>
+                        <button className="btn btn-primary me-2" onClick={() => setShowExpenseModal(true)}>Add Expense</button>
+                        <button className="btn btn-success" onClick={() => setShowServiceModal(true)}>Add Service</button>
                     </div>
                 </div>
             </div>
