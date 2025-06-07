@@ -73,7 +73,7 @@ export default function NavMenu() {
                     </h5>
                     {(() => {
                         const role = handleRole();
-                        return role !== null ? <span className="badge bg-dark rounded-pill ms-1">{role}</span> : null;
+                        return role !== null ? <span className="badge bg-dark rounded-pill badge-role ms-1">{role}</span> : null;
                     })()}
                     <button
                         type="button"
