@@ -302,7 +302,7 @@ const Dashboard = () => {
             </div>
 
             {/* Year & Month Filters */}
-            <div className="sticky-top bg-white py-2 shadow-sm" style={{ zIndex: 1020 }}>
+            <div className="sticky-top bg-white py-2 my-3" style={{ zIndex: 1020 }}>
                 <div className="container d-flex flex-wrap align-items-center justify-content-between">
                     <div className="d-flex flex-wrap">
                         <div className="me-3 mb-2">

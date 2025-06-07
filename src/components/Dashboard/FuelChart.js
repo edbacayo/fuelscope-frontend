@@ -70,9 +70,9 @@ const FuelChart = () => {
 
     return (
         <div className="card shadow-sm p-4">
-            {/* 📊 Fuel Cost Chart */}
+            {/* Fuel Cost Chart */}
             <h5 className="card-title">Fuel Costs Over Time</h5>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={fuelData}>
                     <XAxis dataKey="date" />
                     <YAxis />

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { FilterContext } from '../../context/FilterContext'; // ✅ Use the global filter context
+import { FilterContext } from '../../context/FilterContext'; // Use the global filter context
 
 const FuelEfficiencyChart = () => {
     const [efficiencyData, setEfficiencyData] = useState([]);
@@ -10,7 +10,7 @@ const FuelEfficiencyChart = () => {
     const { vehicleId } = useParams();
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-    // ✅ Use global filters
+    // Use global filters
     const { selectedYear, selectedMonth } = useContext(FilterContext);
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const FuelEfficiencyChart = () => {
                     }
                 });
 
-                // ✅ Filter and sort fuel entries
+                // Filter and sort fuel entries
                 const fuelEntries = response.data
                     .filter(entry => entry.type === 'fuel')
                     .map(entry => ({
@@ -35,7 +35,7 @@ const FuelEfficiencyChart = () => {
                         const entryYear = entry.date.getFullYear();
                         const entryMonth = entry.date.getMonth() + 1;
 
-                        // ✅ Apply global filters
+                        // Apply global filters
                         return (
                             (selectedYear === 0 || entryYear === selectedYear) &&
                             (selectedMonth === 0 || entryMonth === selectedMonth)
@@ -43,7 +43,7 @@ const FuelEfficiencyChart = () => {
                     })
                     .sort((a, b) => a.date - b.date); // Sort chronologically
 
-                // ✅ Calculate fuel efficiency (km/L)
+                // Calculate fuel efficiency (km/L)
                 const efficiencyEntries = [];
                 for (let i = 1; i < fuelEntries.length; i++) {
                     const previousEntry = fuelEntries[i - 1];
@@ -68,9 +68,9 @@ const FuelEfficiencyChart = () => {
         };
 
         fetchFuelData();
-    }, [vehicleId, backendUrl, selectedYear, selectedMonth]); // ✅ Re-fetch on filter change
+    }, [vehicleId, backendUrl, selectedYear, selectedMonth]); // Re-fetch on filter change
 
-    // 💡 Custom Tooltip Formatter
+    // Custom Tooltip Formatter
     const tooltipFormatter = (value) => {
         return [`${value.toFixed(2)} km/L`, 'Efficiency'];
     };
@@ -80,9 +80,9 @@ const FuelEfficiencyChart = () => {
 
     return (
         <div className="card shadow-sm p-4">
-            {/* 📊 Fuel Efficiency Chart */}
+            {/* Fuel Efficiency Chart */}
             <h5 className="card-title">Fuel Efficiency Over Time (km/L)</h5>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={efficiencyData}>
                     <XAxis dataKey="date" />
                     <YAxis />
