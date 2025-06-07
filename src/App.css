@@ -6,11 +6,7 @@
 }
 
 /* Global font-family */
-body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #f8f9fa;  /* Light gray background */
-  color: #212529;              /* Dark gray text */
-}
+
 
 /* Main app container */
 .App {
@@ -142,4 +138,11 @@ a {
 .card .card-text {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+
+
+.badge-role {
+    font-size: .5rem;
+    padding: .25rem;
 }

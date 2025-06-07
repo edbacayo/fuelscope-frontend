@@ -11,6 +11,7 @@ import ManageVehicles from './pages/ManageVehicles';
 import { FilterProvider } from './context/FilterContext';
 import NavMenu from './components/NavMenu';
 import ChangePasswordModal from './components/modals/ChangePasswordModal';
+import './App.css';
 
 // Enable Bootstrap icons & tooltips
 import 'bootstrap-icons/font/bootstrap-icons.css';

@@ -12,8 +12,8 @@ code {
     monospace;
 }
 
-.btn-role {
-    font-size: .5rem;
-    padding: .25rem;
-    border: 2px solid;
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;  /* Light gray background */
+  color: #212529;              /* Dark gray text */
 }
