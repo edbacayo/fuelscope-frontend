@@ -146,3 +146,7 @@ a {
     font-size: .5rem;
     padding: .25rem;
 }
+
+.text-smaller {
+    font-size: .5rem;
+}

@@ -7,7 +7,7 @@ import ServiceModal from '../modals/ServiceModal';
 import FuelEfficiencyChart from './FuelEfficiencyChart';
 import FuellyImportModal from '../modals/FuellyImportModal';
 import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
-import 'bootstrap/dist/js/bootstrap.bundle';
+// import 'bootstrap/dist/js/bootstrap.bundle';
 import api from '../../utils/api';
 
 const Dashboard = () => {
@@ -287,7 +287,7 @@ const Dashboard = () => {
                                 {upcomingReminders.map((reminder, idx) => (
                                     <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
                                         {reminder.type}
-                                        <span className="badge bg-primary">
+                                        <span className="badge rounded-pill bg-primary">
                                             {reminder.kmUntilDue > 0
                                                 ? `Due in ${reminder.kmUntilDue} km`
                                                 : `Due by ${new Date(reminder.dueDate).toLocaleDateString()}`
@@ -302,7 +302,7 @@ const Dashboard = () => {
             </div>
 
             {/* Year & Month Filters */}
-            <div className="sticky-top bg-white py-2 my-3" style={{ zIndex: 1020 }}>
+            <div className="py-2 my-3">
                 <div className="container d-flex flex-wrap align-items-center justify-content-between">
                     <div className="d-flex flex-wrap">
                         <div className="me-3 mb-2">
@@ -458,10 +458,10 @@ const Dashboard = () => {
                                         <td>{expense.odometer ? `${expense.odometer} km` : 'N/A'}</td>
                                         <td>
                                             <button
-                                                className="btn btn-danger btn-sm"
+                                                className="btn btn-danger rounded-pill btn-sm text-smaller"
                                                 onClick={() => handleDeleteExpense(expense._id, expense.type)}
                                             >
-                                                🗑 Delete
+                                                Delete
                                             </button>
                                         </td>
                                     </tr>
