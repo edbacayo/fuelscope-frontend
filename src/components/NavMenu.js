@@ -1,29 +1,29 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import ExpenseCsvModal from './modals/ExpenseCsvModal';
-import ChangePasswordModal from './modals/ChangePasswordModal';
-import 'bootstrap/js/dist/offcanvas';
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import ExpenseCsvModal from "./modals/ExpenseCsvModal";
+import ChangePasswordModal from "./modals/ChangePasswordModal";
+import "bootstrap/js/dist/offcanvas";
 
 export default function NavMenu() {
     const navigate = useNavigate();
     const location = useLocation();
     // derive userRole from token so NavMenu re-renders on location change
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     let userRole;
     try {
-        userRole = JSON.parse(atob(token.split('.')[1])).role;
+        userRole = JSON.parse(atob(token.split(".")[1])).role;
     } catch {
         userRole = null;
     }
     const [showChangePw, setShowChangePw] = React.useState(false);
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('mustResetPassword');
-        navigate('/login', { replace: true });
+        localStorage.removeItem("token");
+        localStorage.removeItem("mustResetPassword");
+        navigate("/login", { replace: true });
     };
 
     const handleRole = () => {
-        if(userRole === 'admin' || userRole === 'premium') {
+        if (userRole === "admin" || userRole === "premium") {
             return userRole;
         } else {
             return null;
@@ -50,16 +50,17 @@ export default function NavMenu() {
             </nav>
 
             {/* Expense CSV Modal integration */}
-            {location.pathname.startsWith('/dashboard/') && location.search.includes('import=csv') && (
-                <ExpenseCsvModal
-                    show={true}
-                    onClose={() => {
-                        const url = location.pathname;
-                        navigate(url, { replace: true });
-                    }}
-                    vehicleId={location.pathname.split('/')[2]}
-                />
-            )}
+            {location.pathname.startsWith("/dashboard/") &&
+                location.search.includes("import=csv") && (
+                    <ExpenseCsvModal
+                        show={true}
+                        onClose={() => {
+                            const url = location.pathname;
+                            navigate(url, { replace: true });
+                        }}
+                        vehicleId={location.pathname.split("/")[2]}
+                    />
+                )}
             <div
                 className="offcanvas offcanvas-start"
                 tabIndex="-1"
@@ -73,7 +74,11 @@ export default function NavMenu() {
                     </h5>
                     {(() => {
                         const role = handleRole();
-                        return role !== null ? <span className="badge bg-dark rounded-pill badge-role ms-1">{role}</span> : null;
+                        return role !== null ? (
+                            <span className="badge bg-dark rounded-pill badge-role ms-1">
+                                {role}
+                            </span>
+                        ) : null;
                     })()}
                     <button
                         type="button"
@@ -88,8 +93,12 @@ export default function NavMenu() {
                             <>
                                 <li className="nav-item">
                                     <button
-                                        className={`nav-link ${location.pathname.startsWith('/dashboard') ? 'active' : ''}`}
-                                        onClick={() => navigate('/dashboard')}
+                                        className={`nav-link ${
+                                            location.pathname.startsWith("/dashboard")
+                                                ? "active"
+                                                : ""
+                                        }`}
+                                        onClick={() => navigate("/dashboard")}
                                         data-bs-dismiss="offcanvas"
                                     >
                                         <i className="bi bi-speedometer2 me-2"></i>Dashboard
@@ -97,40 +106,50 @@ export default function NavMenu() {
                                 </li>
                                 <li className="nav-item">
                                     <button
-                                        className={`nav-link ${location.pathname.startsWith('/manage-vehicles') ? 'active' : ''}`}
-                                        onClick={() => navigate('/manage-vehicles')}
+                                        className={`nav-link ${
+                                            location.pathname.startsWith("/manage-vehicles")
+                                                ? "active"
+                                                : ""
+                                        }`}
+                                        onClick={() => navigate("/manage-vehicles")}
                                         data-bs-dismiss="offcanvas"
                                     >
                                         <i className="bi bi-car-front-fill me-2"></i>Manage Vehicles
                                     </button>
                                 </li>
-                                {location.pathname.startsWith('/dashboard') && (
+                                {location.pathname.startsWith("/dashboard") && (
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate(`${location.pathname}?import=fuelly`)}
+                                            onClick={() =>
+                                                navigate(`${location.pathname}?import=fuelly`)
+                                            }
                                             data-bs-dismiss="offcanvas"
                                         >
-                                            <i className="bi bi-file-earmark-arrow-down me-2"></i>Import from Fuelly
+                                            <i className="bi bi-file-earmark-arrow-down me-2"></i>
+                                            Import from Fuelly
                                         </button>
                                     </li>
                                 )}
-                                {location.pathname.startsWith('/dashboard') && (
+                                {location.pathname.startsWith("/dashboard") && (
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate(`${location.pathname}?import=csv`)}
+                                            onClick={() =>
+                                                navigate(`${location.pathname}?import=csv`)
+                                            }
                                             data-bs-dismiss="offcanvas"
                                         >
-                                            <i className="bi bi-file-earmark-arrow-down me-2"></i>Import/Export CSV
+                                            <i className="bi bi-file-earmark-arrow-down me-2"></i>
+                                            Import/Export CSV
                                         </button>
                                     </li>
                                 )}
-                                {userRole === 'admin' && (
+                                {userRole === "admin" && (
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate('/admin')}
+                                            onClick={() => navigate("/admin")}
                                             data-bs-dismiss="offcanvas"
                                         >
                                             <i className="bi bi-gear-fill me-2"></i>Admin Panel
@@ -151,7 +170,7 @@ export default function NavMenu() {
                             <li className="nav-item">
                                 <button
                                     className="nav-link"
-                                    onClick={() => navigate('/login')}
+                                    onClick={() => navigate("/login")}
                                     data-bs-dismiss="offcanvas"
                                 >
                                     <i className="bi bi-box-arrow-in-right me-2"></i>Login
@@ -164,10 +183,7 @@ export default function NavMenu() {
                         {userRole && (
                             <>
                                 <hr />
-                                <button
-                                    className="btn btn-danger w-100"
-                                    onClick={handleLogout}
-                                >
+                                <button className="btn btn-danger w-100" onClick={handleLogout}>
                                     <i className="bi bi-box-arrow-right me-2"></i>Logout
                                 </button>
                             </>
@@ -175,7 +191,7 @@ export default function NavMenu() {
                     </div>
                 </div>
             </div>
-        <ChangePasswordModal show={showChangePw} onHide={() => setShowChangePw(false)} />
+            <ChangePasswordModal show={showChangePw} onHide={() => setShowChangePw(false)} />
         </>
     );
 }

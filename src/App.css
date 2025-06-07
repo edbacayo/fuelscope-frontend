@@ -90,6 +90,12 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     margin-bottom: 10px;
   }
+
+  /* Override for buttons within the navbar */
+  .navbar .btn {
+    width: auto; 
+    margin-bottom: 0; 
+  }
 }
 
 /* Prevent text overflow inside cards */
