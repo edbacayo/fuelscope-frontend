@@ -148,7 +148,7 @@ export default function NavMenu() {
                                 {userRole === "admin" && (
                                     <li className="nav-item">
                                         <button
-                                            className="nav-link"
+                                            className={`nav-link ${location.pathname.startsWith("/admin") ? "active" : ""}`}
                                             onClick={() => navigate("/admin")}
                                             data-bs-dismiss="offcanvas"
                                         >
