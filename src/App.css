@@ -153,6 +153,6 @@ a {
     padding: .25rem;
 }
 
-.text-smaller {
-    font-size: .5rem;
+.toast-container {
+    z-index: 1050;
 }

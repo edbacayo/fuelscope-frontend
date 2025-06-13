@@ -7,7 +7,6 @@ import ServiceModal from '../modals/ServiceModal';
 import FuelEfficiencyChart from './FuelEfficiencyChart';
 import FuellyImportModal from '../modals/FuellyImportModal';
 import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
-// import 'bootstrap/dist/js/bootstrap.bundle';
 import api from '../../utils/api';
 
 const Dashboard = () => {
