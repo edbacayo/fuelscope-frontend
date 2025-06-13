@@ -1,6 +1,16 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const ToastContext = createContext();
+
+// Global toast function that can be used outside React components
+let globalShowToast = (message, type) => {
+  console.warn('Toast system not initialized yet', message);
+};
+
+// Export a function that can be imported anywhere
+export const showGlobalToast = (message, type = 'info', duration = 5000) => {
+  globalShowToast(message, type, duration);
+};
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
@@ -12,6 +22,14 @@ export const ToastProvider = ({ children }) => {
       setToasts(prev => prev.filter(toast => toast.id !== id));
     }, duration);
   };
+  
+  // Store the function in the global reference when the component mounts
+  useEffect(() => {
+    globalShowToast = showToast;
+    return () => {
+      globalShowToast = (message) => console.warn('Toast system unmounted', message);
+    };
+  }, []);
 
   const hideToast = (id) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
