@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const VehicleSelector = () => {
     const [vehicles, setVehicles] = useState([]);
@@ -21,7 +22,7 @@ const VehicleSelector = () => {
                 setVehicles(response.data);
                 setLoading(false);
 
-                // ✅ Auto-select the first vehicle if no vehicle is selected
+                // Auto-select the first vehicle if no vehicle is selected
                 if (!vehicleId && response.data.length > 0) {
                     navigate(`/dashboard/${response.data[0]._id}`);
                 }
@@ -38,7 +39,7 @@ const VehicleSelector = () => {
         navigate(`/dashboard/${selectedVehicleId}`);
     };
 
-    if (loading) return <p>Loading vehicles...</p>;
+    if (loading) return <LoadingSpinner size='small' message='Loading vehicles...' />;
     if (vehicles.length === 0) return <p>No vehicles found. Please add a vehicle.</p>;
 
     return (

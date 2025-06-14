@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import VehicleRow from '../../components/AdminPanel/VehicleRow';
 import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 import PaginationControls from '../../components/AdminPanel/PaginationControls';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export default function VehicleSection() {
     const [vehicles, setVehicles] = useState([]);
@@ -139,11 +140,7 @@ export default function VehicleSection() {
                 </div>
                 
                 {loading ? (
-                    <div className="text-center my-4">
-                        <div className="spinner-border text-primary" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
+                    <LoadingSpinner size='small' message='Loading vehicles...' />
                 ) : (
                     <>
                         <table className="table table-hover">

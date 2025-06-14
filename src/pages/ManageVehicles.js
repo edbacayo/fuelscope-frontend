@@ -3,6 +3,7 @@ import api from '../utils/api';
 import NoVehicles from './NoVehicles';
 import AddVehicleModal from '../components/modals/AddVehicleModal';
 import 'bootstrap/js/dist/modal';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const ManageVehicles = () => {
     const [vehicles, setVehicles] = useState([]);
@@ -130,14 +131,13 @@ const ManageVehicles = () => {
               <button className="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addVehicleModal">Add Vehicle</button>
             )}
           </div>
+          
           {/* Loading Spinner */}
-          {loading && (
-            <div className="d-flex justify-content-center my-4">
-              <div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div>
-            </div>
-          )}
+          {loading && <LoadingSpinner size='small' message='Loading vehicles...' />}
+
           {/* Empty state */}
           {!loading && vehicles.length === 0 && <NoVehicles />}
+          
           {/* Vehicles Table */}
           {!loading && vehicles.length > 0 && (
              <table className="table">

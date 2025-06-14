@@ -2,17 +2,15 @@ import React, { useEffect, useState, useContext } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { FilterContext } from '../../context/FilterContext'; // Import Global Filter Context
-import { buildUrl, getBackendUrl } from '../../utils/urlHelper'; // Import URL helper functions
+import { FilterContext } from '../../context/FilterContext';
+import { buildUrl, getBackendUrl } from '../../utils/urlHelper';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const FuelChart = () => {
     const [fuelData, setFuelData] = useState([]);
     const [loading, setLoading] = useState(true);
     const { vehicleId } = useParams();
-    // Get clean backend URL from helper
     const backendUrl = getBackendUrl();
-
-    // Use global filter context
     const { selectedYear, selectedMonth } = useContext(FilterContext);
 
     useEffect(() => {
@@ -36,36 +34,34 @@ const FuelChart = () => {
                         const entryYear = entry.date.getFullYear();
                         const entryMonth = entry.date.getMonth() + 1;
 
-                        // Apply global filters
                         return (
                             (selectedYear === 0 || entryYear === selectedYear) &&
                             (selectedMonth === 0 || entryMonth === selectedMonth)
                         );
                     })
-                    .sort((a, b) => a.date - b.date); // Sort chronologically
+                    .sort((a, b) => a.date - b.date);
 
-                // Format dates for the chart
                 setFuelData(
                     fuelEntries.map(entry => ({
                         date: entry.date.toLocaleDateString(),
                         cost: entry.cost
                     }))
                 );
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching fuel data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchFuelData();
-    }, [vehicleId, backendUrl, selectedYear, selectedMonth]); // Re-fetch when filters change
+    }, [vehicleId, backendUrl, selectedYear, selectedMonth]);
 
-    // Custom Tooltip Formatter
     const tooltipFormatter = (value) => {
         return [`₱${value.toFixed(2)}`, 'Cost'];
     };
 
-    if (loading) return <div>Loading fuel data...</div>;
+    if (loading) return <LoadingSpinner size='small' message='Loading fuel data...' />;
     if (fuelData.length === 0) return <div>No fuel data available for this vehicle.</div>;
 
     return (

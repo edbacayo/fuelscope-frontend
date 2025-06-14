@@ -2,7 +2,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { FilterContext } from '../../context/FilterContext'; // Use the global filter context
+import { FilterContext } from '../../context/FilterContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const FuelEfficiencyChart = () => {
     const [efficiencyData, setEfficiencyData] = useState([]);
@@ -35,13 +36,12 @@ const FuelEfficiencyChart = () => {
                         const entryYear = entry.date.getFullYear();
                         const entryMonth = entry.date.getMonth() + 1;
 
-                        // Apply global filters
                         return (
                             (selectedYear === 0 || entryYear === selectedYear) &&
                             (selectedMonth === 0 || entryMonth === selectedMonth)
                         );
                     })
-                    .sort((a, b) => a.date - b.date); // Sort chronologically
+                    .sort((a, b) => a.date - b.date); 
 
                 // Calculate fuel efficiency (km/L)
                 const efficiencyEntries = [];
@@ -61,21 +61,22 @@ const FuelEfficiencyChart = () => {
                 }
 
                 setEfficiencyData(efficiencyEntries);
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching fuel efficiency data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchFuelData();
-    }, [vehicleId, backendUrl, selectedYear, selectedMonth]); // Re-fetch on filter change
+    }, [vehicleId, backendUrl, selectedYear, selectedMonth]);
 
     // Custom Tooltip Formatter
     const tooltipFormatter = (value) => {
         return [`${value.toFixed(2)} km/L`, 'Efficiency'];
     };
 
-    if (loading) return <div>Loading fuel efficiency data...</div>;
+    if (loading) return <LoadingSpinner size='small' message='Loading fuel efficiency data...' />;
     if (efficiencyData.length === 0) return <div>No fuel efficiency data available for this vehicle.</div>;
 
     return (
