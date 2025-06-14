@@ -6,9 +6,10 @@ import ExpenseModal from '../modals/ExpenseModal';
 import ServiceModal from '../modals/ServiceModal';
 import FuelEfficiencyChart from './FuelEfficiencyChart';
 import FuellyImportModal from '../modals/FuellyImportModal';
-import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
+import { FilterContext } from '../../context/FilterContext'; 
 import api from '../../utils/api';
 import { useErrorHandler } from '../../utils/errorHandler';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const Dashboard = () => {
     const { vehicleId } = useParams();
@@ -48,6 +49,7 @@ const Dashboard = () => {
             setLoading(false);
         } catch (error) {
             handleError(error, 'Failed to load expense data');
+            setLoading(false);
         }
     }, [vehicleId, handleError]);
 
@@ -80,7 +82,6 @@ const Dashboard = () => {
             // Refresh the expense list after deletion
             onExpenseDeleted();
 
-            // If it was a service expense, refresh service reminders
             if (type === 'service') {
                 fetchVehicleData(); 
             }
@@ -88,7 +89,6 @@ const Dashboard = () => {
             handleError(error, 'Failed to delete expense');
         }
     };
-
 
     // fetch vehicle data to check service reminders
     const fetchVehicleData = useCallback(async () => {
@@ -164,10 +164,10 @@ const Dashboard = () => {
         const entryMonth = entryDate.getMonth() + 1;
 
         return (
-            (selectedYear === 0 || entryYear === selectedYear) && // Show all years if 0 is selected
-            (selectedMonth === 0 || entryMonth === selectedMonth) // Show all months if 0 is selected
+            (selectedYear === 0 || entryYear === selectedYear) &&
+            (selectedMonth === 0 || entryMonth === selectedMonth)
         );
-    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // sort by newest to oldest
+    }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
     const totalExpensePages = Math.ceil(filteredExpenses.length / EXPENSES_PER_PAGE);
     const paginatedExpenses = useMemo(() => {
@@ -242,7 +242,7 @@ const Dashboard = () => {
         { value: 12, name: 'December' }
     ];
 
-    if (loading) return <p>Loading dashboard...</p>;
+    if (loading) return <LoadingSpinner size='large' message='Loading dashboard...' />;         
 
     return (
         <div className="container mt-4">
