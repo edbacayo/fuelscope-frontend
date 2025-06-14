@@ -8,6 +8,7 @@ import FuelEfficiencyChart from './FuelEfficiencyChart';
 import FuellyImportModal from '../modals/FuellyImportModal';
 import { FilterContext } from '../../context/FilterContext'; // Import Filter Context
 import api from '../../utils/api';
+import { useErrorHandler } from '../../utils/errorHandler';
 
 const Dashboard = () => {
     const { vehicleId } = useParams();
@@ -24,6 +25,7 @@ const Dashboard = () => {
     const [upcomingReminders, setUpcomingReminders] = useState([]);
     const [expensePage, setExpensePage] = useState(1);
     const EXPENSES_PER_PAGE = 10;
+    const { handleError } = useErrorHandler();
 
     // Use useCallback to memoize fetchExpenses function to prevent unnecessary re-renders
     const fetchExpenses = useCallback(async () => {
@@ -40,33 +42,33 @@ const Dashboard = () => {
 
             // Check for service reminders (triggered by the backend)
             if (response.data.serviceAlerts && response.data.serviceAlerts.length > 0) {
-                setServiceAlerts(response.data.serviceAlerts); // Multiple alerts can be set here
+                setServiceAlerts(response.data.serviceAlerts); 
             }
 
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching expenses:', error);
+            handleError(error, 'Failed to load expense data');
         }
-    }, [vehicleId]);
+    }, [vehicleId, handleError]);
 
     const fetchUpcomingReminders = useCallback(async () => {
         try {
             const response = await api.get(`/api/vehicles/${vehicleId}/reminders/upcoming`);
             setUpcomingReminders(response.data);
         } catch (error) {
-            console.error('Error fetching upcoming reminders:', error);
+            handleError(error, 'Failed to load upcoming reminders');
         }
-    }, [vehicleId]);
+    }, [vehicleId, handleError]);
 
 
     const onExpenseAdded = () => {
         setLoading(true);
-        fetchExpenses(); // Re-fetch expenses to update alerts and service reminders
+        fetchExpenses(); 
     };
 
     const onExpenseDeleted = async () => {
         setLoading(true);
-        await fetchExpenses(); // Refresh expenses list
+        await fetchExpenses(); 
     };
 
     const handleDeleteExpense = async (expenseId, type) => {
@@ -80,10 +82,10 @@ const Dashboard = () => {
 
             // If it was a service expense, refresh service reminders
             if (type === 'service') {
-                fetchVehicleData(); // Refresh vehicle data to update reminders
+                fetchVehicleData(); 
             }
-        } catch (err) {
-            console.error('Error deleting expense:', err);
+        } catch (error) {
+            handleError(error, 'Failed to delete expense');
         }
     };
 
@@ -96,9 +98,9 @@ const Dashboard = () => {
             const vehicle = response.data;
             checkServiceReminders(vehicle.serviceReminders, vehicle.odometer);
         } catch (error) {
-            console.error('Error fetching vehicle data:', error);
+            handleError(error, 'Failed to load vehicle data');
         }
-    }, [vehicleId]);
+    }, [vehicleId, handleError]);
 
     // check service reminders after fetching vehicle data
     const checkServiceReminders = (serviceReminders, currentOdometer) => {
@@ -220,12 +222,12 @@ const Dashboard = () => {
 
     // Generate a list of years dynamically
     const years = [
-        0, // 0 will represent "All Years"
+        0, 
         ...Array.from({ length: 10 }, (_, index) => new Date().getFullYear() - index)
     ];
 
     const months = [
-        { value: 0, name: 'All Months' }, // Show all months
+        { value: 0, name: 'All Months' }, 
         { value: 1, name: 'January' },
         { value: 2, name: 'February' },
         { value: 3, name: 'March' },
