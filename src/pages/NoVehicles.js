@@ -1,34 +1,30 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useErrorHandler } from '../utils/errorHandler';
+import api from '../utils/api';
 
 const NoVehicles = () => {
     const [vehicleName, setVehicleName] = useState('');
     const [odometer, setOdometer] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { handleError } = useErrorHandler();
 
     const handleAddVehicle = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/vehicles`,
+            const response = await api.post(
+                `/api/vehicles`,
                 {
                     name: vehicleName,
                     odometer: parseFloat(odometer),
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             );
 
-            // ✅ Redirect to dashboard for the new vehicle
+            // Redirect to dashboard for the new vehicle
             navigate(`/dashboard/${response.data._id}`);
         } catch (error) {
-            console.error('Error adding vehicle:', error);
+            handleError(error, 'Failed to add vehicle');
             setError('Failed to add vehicle. Please try again.');
         }
     };

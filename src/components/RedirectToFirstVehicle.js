@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import api from '../utils/api';
+import { useErrorHandler } from '../utils/errorHandler';
 
 const RedirectToFirstVehicle = () => {
     const [redirectPath, setRedirectPath] = useState(null);
+    const { handleError } = useErrorHandler();
 
     useEffect(() => {
         const fetchVehicles = async () => {
@@ -25,13 +27,13 @@ const RedirectToFirstVehicle = () => {
                     setRedirectPath('/no-vehicles');
                 }
             } catch (error) {
-                console.error('Error fetching vehicles:', error);
+                handleError(error, 'Failed to fetch vehicles');
                 setRedirectPath('/login');
             }
         };
 
         fetchVehicles();
-    }, []);
+    }, [handleError]);
 
     // Perform redirection once the path is ready
     if (redirectPath) {

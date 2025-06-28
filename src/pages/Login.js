@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DisclaimerModal from "../components/modals/DisclaimerModal";
 import api from "../utils/api";
+import { useErrorHandler } from "../utils/errorHandler";
 
 const Login = () => {
     // Wake up Heroku dyno by pinging the backend on mount
@@ -17,6 +18,7 @@ const Login = () => {
     const [website, setWebsite] = useState(""); // honeypot field
     const [isRegister, setIsRegister] = useState(false);
     const navigate = useNavigate();
+    const { handleError } = useErrorHandler();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -58,7 +60,7 @@ const Login = () => {
                 navigate("/no-vehicles");
             }
         } catch (err) {
-            console.error("Login failed:", err);
+            handleError(err, 'Login failed');
             setError("Invalid email or password. Please try again.");
         }
     };
@@ -86,7 +88,7 @@ const Login = () => {
                 navigate(`/dashboard/${vehicleResponse.data[0]._id}`);
             else navigate("/no-vehicles");
         } catch (err) {
-            console.error("Registration failed:", err);
+            handleError(err, 'Registration failed');
             setError(`Registration failed. Please try again.`);
         } 
     };
