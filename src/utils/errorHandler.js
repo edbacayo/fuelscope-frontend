@@ -1,4 +1,4 @@
-import { useToast } from '../context/ToastContext';
+import { useToast, showGlobalToast } from '../context/ToastContext';
 
 // Error types
 export const ERROR_TYPES = {
@@ -46,7 +46,6 @@ export const getUserMessage = (error) => {
       return "Server error. Our team has been notified.";
     
     case ERROR_TYPES.VALIDATION:
-      // Try to extract validation message from response
       if (error.response && error.response.data && error.response.data.error) {
         return error.response.data.error;
       }
@@ -60,7 +59,35 @@ export const getUserMessage = (error) => {
   }
 };
 
-// Hook for handling errors in components
+// Shared auth error handling state
+export let hasShownAuthError = false;
+
+// Shared function to handle auth errors with debouncing
+export const handleAuthErrorWithDebounce = (showToastFn) => {
+  if (!hasShownAuthError) {
+    hasShownAuthError = true;
+    
+    // Show toast using either the provided function or the global function
+    if (showToastFn) {
+      showToastFn("Session expired. Please log in again.", 'danger');
+    } else {
+      // Use global toast function as fallback
+      showGlobalToast("Session expired. Please log in again.", 'danger');
+    }
+    
+    setTimeout(() => {
+      hasShownAuthError = false;
+    }, 5000);
+  }
+  
+  // Always clear token and redirect
+  localStorage.removeItem('token');
+  
+  setTimeout(() => {
+    window.location.href = "/login";
+  }, 1500);
+};
+
 export const useErrorHandler = () => {
   const { showToast } = useToast();
   
@@ -70,23 +97,18 @@ export const useErrorHandler = () => {
     const type = getErrorType(error);
     const message = customMessage || getUserMessage(error);
     
+    // Handle authentication errors with debouncing
+    if (type === ERROR_TYPES.AUTH) {
+      handleAuthErrorWithDebounce((msg, type) => showToast(msg, type));
+      return { type, message };
+    }
+    
     // Show toast with appropriate type
     let toastType = 'danger';
     if (type === ERROR_TYPES.NETWORK) toastType = 'warning';
     if (type === ERROR_TYPES.VALIDATION) toastType = 'warning';
     
     showToast(message, toastType);
-    
-    // Handle authentication errors
-    if (type === ERROR_TYPES.AUTH) {
-      // Clear token
-      localStorage.removeItem('token');
-      
-      // Redirect to login after a short delay
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
-    }
     
     return { type, message };
   };

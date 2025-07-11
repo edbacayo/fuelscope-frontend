@@ -1,6 +1,5 @@
 import axios from "axios";
-import { getErrorType, ERROR_TYPES } from "./errorHandler";
-// import { showGlobalToast } from "../context/ToastContext";
+import { getErrorType, ERROR_TYPES, handleAuthErrorWithDebounce } from "./errorHandler";
 
 // Clean the backend URL to prevent double slashes
 const cleanUrl = (url) => (url ? url.replace(/\/$/, "") : "");
@@ -12,7 +11,6 @@ const api = axios.create({
     withCredentials: true,
 });
 
-// Add interceptor to fix URL paths with double slashes
 api.interceptors.request.use((config) => {
     // Fix URL if it contains double slashes (except after protocol)
     if (config.url && config.url.includes("//")) {
@@ -28,22 +26,13 @@ api.interceptors.request.use((cfg) => {
     return cfg;
 });
 
-// Add response interceptor to handle auth errors
 api.interceptors.response.use(
-    (response) => response, // Return successful responses as-is
+    (response) => response,
     (error) => {
-        // Check if error is due to authentication issues
         const errorType = getErrorType(error);
         if (errorType === ERROR_TYPES.AUTH) {
-            // Clear the token
-            localStorage.removeItem("token");
-            
-            // Redirect to login page after a short delay to allow the toast to be seen
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 1500);
+            handleAuthErrorWithDebounce(null);
         }
-        // Return the error for further handling
         return Promise.reject(error);
     }
 );
