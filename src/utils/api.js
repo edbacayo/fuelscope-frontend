@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getErrorType, ERROR_TYPES } from "./errorHandler";
-import { showGlobalToast } from "../context/ToastContext";
+// import { showGlobalToast } from "../context/ToastContext";
 
 // Clean the backend URL to prevent double slashes
 const cleanUrl = (url) => (url ? url.replace(/\/$/, "") : "");
@@ -37,9 +37,6 @@ api.interceptors.response.use(
         if (errorType === ERROR_TYPES.AUTH) {
             // Clear the token
             localStorage.removeItem("token");
-            
-            // Show toast notification before redirecting
-            showGlobalToast("Session expired. Please log in again.", "danger");
             
             // Redirect to login page after a short delay to allow the toast to be seen
             setTimeout(() => {
