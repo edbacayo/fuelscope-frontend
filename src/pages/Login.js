@@ -104,9 +104,11 @@ const Login = () => {
     };
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center">{isRegister ? "Register" : "Login"}</h2>
-            <form onSubmit={isRegister ? handleRegister : handleLogin} className="mt-4">
+        <div className="container mt-5 d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
+            <div className="card shadow" style={{ width: "100%", maxWidth: "500px" }}>
+                <div className="card-body p-4">
+                    <h2 className="text-center mb-4">{isRegister ? "Register" : "Login"}</h2>
+                    <form onSubmit={isRegister ? handleRegister : handleLogin}>
                 {isRegister && (
                     <div className="mb-3">
                         <label>Name</label>
@@ -177,7 +179,7 @@ const Login = () => {
                 {error && <p className="text-danger">{error}</p>}
                 <button
                     type="submit"
-                    className="btn btn-primary w-100"
+                    className="btn btn-primary mt-3 w-100"
                     disabled={(isRegister && !disclaimerChecked)}
                 >
                     {isRegister ? "Register" : "Login"}
@@ -193,20 +195,22 @@ const Login = () => {
                     show={showDisclaimerModal}
                     onHide={() => setShowDisclaimerModal(false)}
                 />
-            </form>
-            <p className="mt-3 text-center">
-                {isRegister ? "Already have an account?" : "Don't have an account?"}
-                <button
-                    type="button"
-                    className="btn btn-link p-0 ms-2"
-                    onClick={() => {
-                        setIsRegister(!isRegister);
-                        setError("");
-                    }}
-                >
-                    {isRegister ? "Login" : "Register"}
-                </button>
-            </p>
+                    </form>
+                    <p className="mt-3 text-center">
+                        {isRegister ? "Already have an account?" : "Don't have an account?"}
+                        <button
+                            type="button"
+                            className="btn btn-link p-0 ms-2"
+                            onClick={() => {
+                                setIsRegister(!isRegister);
+                                setError("");
+                            }}
+                        >
+                            {isRegister ? "Login" : "Register"}
+                        </button>
+                    </p>
+                </div>
+            </div>
         </div>
     );
 };
