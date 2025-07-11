@@ -15,33 +15,31 @@ const Dashboard = () => {
     const { vehicleId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const { selectedYear, setSelectedYear, selectedMonth, setSelectedMonth } = useContext(FilterContext); // Get filter values from context
+    const { selectedYear, setSelectedYear, selectedMonth, setSelectedMonth } = useContext(FilterContext); 
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [showServiceModal, setShowServiceModal] = useState(false);
-    const [showFuellyModal, setShowFuellyModal] = useState(false); // Modal state for Fuelly import
-    const [efficiencyAlert, setEfficiencyAlert] = useState(null); // Alert State
+    const [showFuellyModal, setShowFuellyModal] = useState(false); 
+    const [efficiencyAlert, setEfficiencyAlert] = useState(null); 
     const [serviceAlerts, setServiceAlerts] = useState([]);
     const [upcomingReminders, setUpcomingReminders] = useState([]);
     const [expensePage, setExpensePage] = useState(1);
     const EXPENSES_PER_PAGE = 10;
     const { handleError } = useErrorHandler();
 
-    // Use useCallback to memoize fetchExpenses function to prevent unnecessary re-renders
+    
     const fetchExpenses = useCallback(async () => {
         try {
             const response = await api.get(`/api/expenses/${vehicleId}`);
 
             setExpenses(response.data);
 
-            // Check for efficiency alert (triggered by the backend)
             const latestFuelEntry = response.data.find((entry) => entry.alert);
             if (latestFuelEntry && latestFuelEntry.alert) {
                 setEfficiencyAlert(latestFuelEntry.alert);
             }
 
-            // Check for service reminders (triggered by the backend)
             if (response.data.serviceAlerts && response.data.serviceAlerts.length > 0) {
                 setServiceAlerts(response.data.serviceAlerts); 
             }
@@ -61,7 +59,6 @@ const Dashboard = () => {
             handleError(error, 'Failed to load upcoming reminders');
         }
     }, [vehicleId, handleError]);
-
 
     const onExpenseAdded = () => {
         setLoading(true);
@@ -196,7 +193,7 @@ const Dashboard = () => {
             const efficiency = distance / liters;
             totalEfficiency += efficiency;
             bestEfficiency = Math.max(bestEfficiency, efficiency);
-            lastEfficiency = efficiency; // Last valid entry
+            lastEfficiency = efficiency; 
             count++;
         }
     }
@@ -498,14 +495,14 @@ const Dashboard = () => {
                     onClose={() => setShowExpenseModal(false)}
                     vehicleId={vehicleId}
                     onAlert={handleNewExpenseAlert}
-                    onExpenseAdded={onExpenseAdded} // Pass re-fetch handler here
+                    onExpenseAdded={onExpenseAdded} 
                 />
                 <ServiceModal
                     show={showServiceModal}
                     onClose={() => setShowServiceModal(false)}
                     vehicleId={vehicleId}
                     onAlert={handleNewServiceAlert}
-                    onExpenseAdded={onExpenseAdded} // Pass the onExpenseAdded function here
+                    onExpenseAdded={onExpenseAdded} 
                 />
                 <FuellyImportModal
                     show={showFuellyModal}
