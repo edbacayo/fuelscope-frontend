@@ -76,7 +76,6 @@ const Dashboard = () => {
         try {
             await api.delete(`/api/expenses/${expenseId}`);
 
-            // Refresh the expense list after deletion
             onExpenseDeleted();
 
             if (type === 'service') {
@@ -146,7 +145,6 @@ const Dashboard = () => {
         setServiceAlerts(updatedAlerts);
     };
 
-    // open Fuelly modal when URL has ?import=fuelly
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         if (params.get('import') === 'fuelly') {
