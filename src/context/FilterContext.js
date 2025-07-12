@@ -4,7 +4,7 @@ export const FilterContext = createContext();
 
 export const FilterProvider = ({ children }) => {
     const currentYear = new Date().getFullYear();
-    const currentMonth = 0; // making value default to 0 - all months. new Date().getMonth() + 1; 
+    const currentMonth = 0; 
 
     const [selectedYear, setSelectedYear] = useState(currentYear);
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
