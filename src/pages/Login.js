@@ -5,7 +5,6 @@ import api from "../utils/api";
 import { useErrorHandler } from "../utils/errorHandler";
 
 const Login = () => {
-    // Wake up Heroku dyno by pinging the backend on mount
     useEffect(() => {
         api.get("/api/ping").catch(() => {});
     }, []);
@@ -15,7 +14,7 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [name, setName] = useState("");
-    const [website, setWebsite] = useState(""); // honeypot field
+    const [website, setWebsite] = useState(""); 
     const [isRegister, setIsRegister] = useState(false);
     const navigate = useNavigate();
     const { handleError } = useErrorHandler();
@@ -31,7 +30,6 @@ const Login = () => {
             const { token } = response.data;
             localStorage.setItem("token", token);
 
-            // Decode JWT and check mustResetPassword
             let mustReset = false;
             try {
                 const payload = JSON.parse(atob(token.split(".")[1]));
@@ -47,11 +45,10 @@ const Login = () => {
             }
 
             if (mustReset) {
-                navigate("/"); // stay on root, let App.js force modal
+                navigate("/"); 
                 return;
             }
 
-            // Fetch user's vehicles after login
             const vehicleResponse = await api.get(`/api/vehicles`);
 
             if (vehicleResponse.data.length > 0) {
@@ -73,7 +70,7 @@ const Login = () => {
             return;
         }
         try {
-            const agreedToDisclaimerAt = new Date().toISOString(); // Use local time for now
+            const agreedToDisclaimerAt = new Date().toISOString(); 
             const response = await api.post(`/api/auth/register`, {
                 name,
                 email,
@@ -93,7 +90,6 @@ const Login = () => {
         } 
     };
 
-    // reset form fields
     const handleClear = () => {
         setName("");
         setEmail("");
