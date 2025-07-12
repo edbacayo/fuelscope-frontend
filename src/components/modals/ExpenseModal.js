@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import validateNumericInput from '../../utils/validateInput';
 
 const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => {
     const [type, setType] = useState('fuel');
@@ -12,7 +13,6 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
     const [duplicateExpense, setDuplicateExpense] = useState(null);
     const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
-    // Dynamic fetch list of fuel brands but fall back to predefined list
     const [fuelBrands, setFuelBrands] = useState([
         'Diesel',
         'Gasoline',
@@ -29,11 +29,9 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
         'Caltex Gold (RON 95+)',
         'Caltex Silver (RON 91+)',
         'Caltex with Techron (RON 91+)',
-        'Caltex Power Diesel with Techron D',
-        'Test'
+        'Caltex Power Diesel with Techron D'
     ]);
 
-    // Fetch fuel brands from backend
     useEffect(() => {
         const fetchFuelBrands = async () => {
             try {
@@ -47,10 +45,9 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
             }
         };
 
-        if (show) fetchFuelBrands(); // fetch only when modal is open
+        if (show) fetchFuelBrands();
     }, [show]);
 
-    // Handle Form Submission with Alert Detection
     const handleSubmit = async (e, forceAdd = false) => {
         e.preventDefault();
         try {
@@ -65,22 +62,20 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
             };
 
             if (forceAdd) {
-                expenseData.forceAdd = true; // This flag is used in the backend but NOT stored
+                expenseData.forceAdd = true; 
             }
 
             const response = await api.post('/api/expenses', expenseData);
 
-            // Handle Alert if Present
             if (response.data.alert && onAlert) {
                 onAlert(response.data.alert);
             }
 
-            // Trigger re-fetch of expenses after successful submission
-            onExpenseAdded(); // This will re-fetch the expenses in Dashboard and update alerts/reminders
-            onClose(); // Close modal after successful submission
+            onExpenseAdded(); 
+            onClose(); 
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                // Handle duplicate detection properly
+                // Handle duplicate detection
                 setDuplicateExpense(err.response.data.duplicate);
                 setShowDuplicateModal(true);
             } else {
@@ -91,8 +86,23 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
 
     const handleTotalCostChange = (e) => {
         const value = e.target.value;
-        if (/^\d*\.?\d*$/.test(value)) {
+        if (validateNumericInput(value)) {
             setTotalCost(value);
+        }
+    };
+    
+    const handleOdometerChange = (e) => {
+        const value = e.target.value;
+        // Odometer should be an integer
+        if (validateNumericInput(value, false)) {
+            setOdometer(value);
+        }
+    };
+    
+    const handlePricePerLiterChange = (e) => {
+        const value = e.target.value;
+        if (validateNumericInput(value)) {
+            setPricePerLiter(value);
         }
     };
 
@@ -129,7 +139,7 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                                 type="number"
                                                 className="form-control"
                                                 value={odometer}
-                                                onChange={(e) => setOdometer(e.target.value)}
+                                                onChange={handleOdometerChange}
                                                 required
                                             />
                                         </div>
@@ -151,6 +161,17 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                 {/* Fuel-specific fields */}
                                 {type === 'fuel' && (
                                     <>
+                                        {/* Price Per Liter */}
+                                        <div className="mb-3">
+                                            <label>Price Per Liter</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                value={pricePerLiter}
+                                                onChange={handlePricePerLiterChange}
+                                                required
+                                            />
+                                        </div>
                                         {/* Fuel Brand Dropdown */}
                                         <div className="mb-3">
                                             <label>Fuel Brand</label>
@@ -165,18 +186,6 @@ const ExpenseModal = ({ show, onClose, vehicleId, onAlert, onExpenseAdded }) => 
                                                     </option>
                                                 ))}
                                             </select>
-                                        </div>
-
-                                        {/* Price Per Liter */}
-                                        <div className="mb-3">
-                                            <label>Price Per Liter</label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                value={pricePerLiter}
-                                                onChange={(e) => setPricePerLiter(e.target.value)}
-                                                required
-                                            />
                                         </div>
                                     </>
                                 )}

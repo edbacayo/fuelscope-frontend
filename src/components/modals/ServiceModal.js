@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
-
+import validateNumericInput from '../../utils/validateInput';
 
 const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => {
     const [odometer, setOdometer] = useState('');
@@ -43,11 +43,9 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
     const handleSubmit = async (e, forceAdd = false) => {
         e.preventDefault();
         try {
-            // Use user-modified values from the state
             const odometerInterval = customOdometerInterval;
             const timeIntervalMonths = customTimeInterval;
 
-            // Prepare the reminder payload only if reminders are enabled
             let reminderToSend = null;
 
             if (enableReminder) {
@@ -79,20 +77,16 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                     : null
             };
 
-            // Send the service entry with the relevant reminder only
             const response = await api.post('/api/expenses', serviceData);
 
-            // Handle Alert if Present
             if (response.data.serviceAlerts && onAlert) {
                 onAlert(response.data.serviceAlerts);
             }
 
-            // Refresh Data & Close Modal
             onExpenseAdded();
             onClose();
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                // Duplicate detected: Show confirmation modal
                 setDuplicateService(err.response.data.duplicate);
                 setShowDuplicateModal(true);
             } else {
@@ -103,11 +97,24 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
 
     const confirmDuplicate = () => {
         if (duplicateService) {
-            handleSubmit(new Event('submit'), true); // Retry submission with forceAdd flag
+            handleSubmit(new Event('submit'), true);
             setShowDuplicateModal(false);
         }
     };
 
+    const handleOdometerChange = (e) => {
+        const value = e.target.value;
+        if (validateNumericInput(value, false)) {
+            setOdometer(value);
+        }
+    };
+
+    const handleTotalCostChange = (e) => {
+        const value = e.target.value;
+        if (validateNumericInput(value)) {
+            setTotalCost(value);
+        }
+    };
 
     if (!show) return null;
 
@@ -146,7 +153,7 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                                         type="number"
                                         className="form-control"
                                         value={odometer}
-                                        onChange={(e) => setOdometer(e.target.value)}
+                                        onChange={(e) => handleOdometerChange(e)}
                                         required
                                     />
                                 </div>
@@ -158,7 +165,7 @@ const ServiceModal = ({ show, onClose, vehicleId, onExpenseAdded, onAlert }) => 
                                         type="number"
                                         className="form-control"
                                         value={totalCost}
-                                        onChange={(e) => setTotalCost(e.target.value)}
+                                        onChange={(e) => handleTotalCostChange(e)}
                                         required
                                     />
                                 </div>

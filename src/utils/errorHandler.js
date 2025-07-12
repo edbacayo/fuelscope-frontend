@@ -59,7 +59,6 @@ export const getUserMessage = (error) => {
   }
 };
 
-// Shared auth error handling state
 export let hasShownAuthError = false;
 
 // Shared function to handle auth errors with debouncing
@@ -67,7 +66,6 @@ export const handleAuthErrorWithDebounce = (showToastFn) => {
   if (!hasShownAuthError) {
     hasShownAuthError = true;
     
-    // Show toast using either the provided function or the global function
     if (showToastFn) {
       showToastFn("Session expired. Please log in again.", 'danger');
     } else {
@@ -80,7 +78,6 @@ export const handleAuthErrorWithDebounce = (showToastFn) => {
     }, 5000);
   }
   
-  // Always clear token and redirect
   localStorage.removeItem('token');
   
   setTimeout(() => {
@@ -103,7 +100,6 @@ export const useErrorHandler = () => {
       return { type, message };
     }
     
-    // Show toast with appropriate type
     let toastType = 'danger';
     if (type === ERROR_TYPES.NETWORK) toastType = 'warning';
     if (type === ERROR_TYPES.VALIDATION) toastType = 'warning';
