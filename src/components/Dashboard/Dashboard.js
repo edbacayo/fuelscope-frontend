@@ -64,6 +64,7 @@ const Dashboard = () => {
     const onExpenseAdded = () => {
         setLoading(true);
         fetchExpenses(); 
+        fetchUpcomingReminders();
         setRefreshTrigger(prev => prev + 1);
     };
 
