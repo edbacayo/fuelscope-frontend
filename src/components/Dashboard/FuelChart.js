@@ -6,7 +6,7 @@ import { FilterContext } from '../../context/FilterContext';
 import { buildUrl, getBackendUrl } from '../../utils/urlHelper';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-const FuelChart = () => {
+const FuelChart = ({ refreshTrigger }) => {
     const [fuelData, setFuelData] = useState([]);
     const [loading, setLoading] = useState(true);
     const { vehicleId } = useParams();
@@ -55,7 +55,7 @@ const FuelChart = () => {
         };
 
         fetchFuelData();
-    }, [vehicleId, backendUrl, selectedYear, selectedMonth]);
+    }, [vehicleId, backendUrl, selectedYear, selectedMonth, refreshTrigger]);
 
     const tooltipFormatter = (value) => {
         return [`₱${value.toFixed(2)}`, 'Cost'];

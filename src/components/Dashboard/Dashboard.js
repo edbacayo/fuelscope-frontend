@@ -27,6 +27,7 @@ const Dashboard = () => {
     const [expensePage, setExpensePage] = useState(1);
     const EXPENSES_PER_PAGE = 10;
     const { handleError } = useErrorHandler();
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     
     const fetchExpenses = useCallback(async () => {
@@ -63,11 +64,13 @@ const Dashboard = () => {
     const onExpenseAdded = () => {
         setLoading(true);
         fetchExpenses(); 
+        setRefreshTrigger(prev => prev + 1);
     };
 
     const onExpenseDeleted = async () => {
         setLoading(true);
         await fetchExpenses(); 
+        setRefreshTrigger(prev => prev + 1);
     };
 
     const handleDeleteExpense = async (expenseId, type) => {
@@ -414,10 +417,10 @@ const Dashboard = () => {
             {/* Charts Section */}
             <div className="row g-3 mt-3">
                 <div className="col-12">
-                    <FuelChart />
+                    <FuelChart refreshTrigger={refreshTrigger} />
                 </div>
                 <div className="col-12">
-                    <FuelEfficiencyChart />
+                    <FuelEfficiencyChart refreshTrigger={refreshTrigger} />
                 </div>
             </div>
 

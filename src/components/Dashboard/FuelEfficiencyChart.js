@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { FilterContext } from '../../context/FilterContext';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-const FuelEfficiencyChart = () => {
+const FuelEfficiencyChart = ({ refreshTrigger }) => {
     const [efficiencyData, setEfficiencyData] = useState([]);
     const [loading, setLoading] = useState(true);
     const { vehicleId } = useParams();
@@ -69,7 +69,7 @@ const FuelEfficiencyChart = () => {
         };
 
         fetchFuelData();
-    }, [vehicleId, backendUrl, selectedYear, selectedMonth]);
+    }, [vehicleId, backendUrl, selectedYear, selectedMonth, refreshTrigger]);
 
     // Custom Tooltip Formatter
     const tooltipFormatter = (value) => {
