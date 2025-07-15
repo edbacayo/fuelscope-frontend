@@ -44,10 +44,6 @@ const Dashboard = () => {
                 }
             }
 
-            if (expenseData.serviceAlerts && expenseData.serviceAlerts.length > 0) {
-                setServiceAlerts(expenseData.serviceAlerts);
-            }
-
             setLoading(false);
         } catch (error) {
             handleError(error, "Failed to load expense data");
