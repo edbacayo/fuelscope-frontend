@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import LoadingSpinner from '../common/LoadingSpinner';
+import api from '../../utils/api';
 
 const VehicleSelector = () => {
     const [vehicles, setVehicles] = useState([]);
@@ -12,12 +12,7 @@ const VehicleSelector = () => {
     useEffect(() => {
         const fetchVehicles = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/vehicles`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await api.get(`/api/vehicles`);
 
                 setVehicles(response.data);
                 setLoading(false);
