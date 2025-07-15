@@ -38,7 +38,7 @@ const Dashboard = () => {
             setExpenses(expenseData);
 
             if (expenseData.length > 0) {
-                const latestFuelEntry = expenseData.find((entry) => entry.alert);
+                const latestFuelEntry = expenseData.find((entry) => entry && entry.alert);
                 if (latestFuelEntry && latestFuelEntry.alert) {
                     setEfficiencyAlert(latestFuelEntry.alert);
                 }
@@ -62,6 +62,7 @@ const Dashboard = () => {
 
     const onExpenseAdded = () => {
         setLoading(true);
+        fetchVehicleData();
         fetchExpenses();
         fetchUpcomingReminders();
         setRefreshTrigger((prev) => prev + 1);
@@ -70,6 +71,8 @@ const Dashboard = () => {
     const onExpenseDeleted = async () => {
         setLoading(true);
         await fetchExpenses();
+        await fetchVehicleData();
+        await fetchUpcomingReminders();
         setRefreshTrigger((prev) => prev + 1);
     };
 
@@ -129,7 +132,13 @@ const Dashboard = () => {
         fetchVehicleData();
         fetchExpenses();
         fetchUpcomingReminders();
-    }, [fetchVehicleData, fetchExpenses, fetchUpcomingReminders]);
+    }, [vehicleId]);
+
+    // useEffect(() => {
+    //     fetchVehicleData();
+    //     fetchExpenses();
+    //     fetchUpcomingReminders();
+    // }, [fetchVehicleData, fetchExpenses, fetchUpcomingReminders]);
 
     useEffect(() => {
         const els = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -301,21 +310,23 @@ const Dashboard = () => {
                     >
                         <div className="accordion-body p-0">
                             <ul className="list-group list-group-flush">
-                                {upcomingReminders.map((reminder, idx) => (
-                                    <li
-                                        key={idx}
-                                        className="list-group-item d-flex justify-content-between align-items-center"
-                                    >
-                                        {reminder.type}
-                                        <span className="badge rounded-pill bg-primary">
-                                            {reminder.kmUntilDue > 0
-                                                ? `Due in ${reminder.kmUntilDue} km`
-                                                : `Due by ${new Date(
-                                                      reminder.dueDate
-                                                  ).toLocaleDateString()}`}
-                                        </span>
-                                    </li>
-                                ))}
+                                {upcomingReminders.map((reminder, idx) => {
+                                    const daysText = reminder.daysUntilDue === 1 ? '1 day' : `${reminder.daysUntilDue} days`;
+                                    const kmText = `${reminder.kmUntilDue} km`;
+                                    const reminderText = `Due in ${daysText} / ${kmText}`;
+
+                                    return (
+                                        <li
+                                            key={idx}
+                                            className="list-group-item d-flex justify-content-between align-items-center"
+                                        >
+                                            {reminder.type}
+                                            <span className="badge rounded-pill bg-primary">
+                                                {reminderText}
+                                            </span>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     </div>
