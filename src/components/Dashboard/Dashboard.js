@@ -262,7 +262,7 @@ const Dashboard = () => {
 
             {serviceAlerts && serviceAlerts.length > 0 && (
                 serviceAlerts.map((alert, index) => (
-                    <div key={index} className="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+                    <div key={` ${index}-${Date.now()}`} className="alert alert-warning alert-dismissible fade show mt-3" role="alert">
                         {alert}
                         <button
                             type="button"
@@ -481,7 +481,7 @@ const Dashboard = () => {
                                 <button className="page-link" onClick={() => setExpensePage(p => p - 1)}>Previous</button>
                             </li>
                             {Array.from({ length: totalExpensePages }, (_, i) => (
-                                <li key={i} className={`page-item ${expensePage === i + 1 ? 'active' : ''}`}>
+                                <li key={`page-${i}`} className={`page-item ${expensePage === i + 1 ? 'active' : ''}`}>
                                     <button className="page-link" onClick={() => setExpensePage(i + 1)}>{i + 1}</button>
                                 </li>
                             ))}
