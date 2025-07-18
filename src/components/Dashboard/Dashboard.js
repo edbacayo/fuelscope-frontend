@@ -134,12 +134,6 @@ const Dashboard = () => {
         fetchUpcomingReminders();
     }, [vehicleId]);
 
-    // useEffect(() => {
-    //     fetchVehicleData();
-    //     fetchExpenses();
-    //     fetchUpcomingReminders();
-    // }, [fetchVehicleData, fetchExpenses, fetchUpcomingReminders]);
-
     useEffect(() => {
         const els = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         els.forEach((el) => new window.bootstrap.Tooltip(el));
